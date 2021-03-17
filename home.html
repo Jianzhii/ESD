@@ -1,0 +1,145 @@
+<!--
+    Name: Asher Leong 
+    Email: asherleong.2019 
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Stonks Exchange</title>
+
+    <!-- CSS (Use this section if you need to) -->
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- Custom JavaScript -->
+    <script src="grocery.js"></script>
+
+    <style>
+        /* YOUR CSS CODE GOES HERE */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #down{
+            color: red;
+        }
+
+        h4 {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        #main {
+            margin: auto;
+            width: 80%;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        #warning{
+            justify-content: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- YOUR CODE GOES HERE -->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="home.html">Stonks Exchange</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="home.html">Home</a>
+                <a class="nav-link" href="#">Portfolio</a>
+            </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row align-items-end">
+            <div class = "col-9">
+                <br>
+                <p>In the past 24hrs</p>
+                <h3>Market is down <span id="down">-0.41%</span></h3>
+               
+            </div>  
+            <div class = "col">
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search for stocks" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>  
+
+    <br>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Change</th>
+            <th scope="col">Market Cap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td><button type="button" class="btn btn-danger">GME</button> Gamestock Corp</td>
+            <td>$195.00</td>
+            <td>-11.82%</td>
+            <td>13.68B USD</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td><button type="button" class="btn btn-secondary">APPL</button> Apple Inc</td>
+            <td>$126.22</td>
+            <td>+1.81%</td>
+            <td>2.13T USD</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td><button type="button" class="btn btn-success">NVDA</button> NVIDIA Corporation</td>
+            <td>$536.17</td>
+            <td>+1.61%</td>
+            <td>332.63B USD</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>
