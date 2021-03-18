@@ -86,7 +86,7 @@ def find_by_customer_id(customer_id):
 def find_by_portfolio_id(customer_id, stock_id):
     portfolio = Portfolio.query.filter_by(
         customer_id=customer_id).filter_by(stock_id=stock_id)
-   
+
     if portfolio:
         return jsonify(
             {
@@ -104,11 +104,15 @@ def find_by_portfolio_id(customer_id, stock_id):
         }
     ), 404
 
+
 @app.route("/portfolio", methods=['POST'])
 def create_order():
     data = request.get_json()
+    print(data)
     portfolio = Portfolio(**data)
-
+    # convert a JSON object to a string and print
+    print(json.dumps(portfolio.json(), default=str))
+    print()
     try:
         db.session.add(portfolio)
         db.session.commit()
@@ -119,7 +123,9 @@ def create_order():
                 "message": "An error occurred while creating the order. " + str(e)
             }
         ), 500
-
+    # convert a JSON object to a string and print
+    print(json.dumps(portfolio.json(), default=str))
+    print()
     return jsonify(
         {
             "code": 201,
@@ -156,16 +162,16 @@ def update_order():
         quantity = request.json.get('quantity', None)
         if quantity > total:
             return jsonify(
-                    {
-                        "code": 501,
-                        "data": {
-                            "customer_id": customer_id,
-                            "stock_id": stock_id,
-                            "balance": total
-                        },
-                        "message": "Can't sell more than available stock."
-                    }
-                ), 501
+                {
+                    "code": 501,
+                    "data": {
+                        "customer_id": customer_id,
+                        "stock_id": stock_id,
+                        "balance": total
+                    },
+                    "message": "Can't sell more than available stock."
+                }
+            ), 501
 
         else:
             sold = []
@@ -173,7 +179,8 @@ def update_order():
                 qty = stock.json()["quantity"]
                 if quantity > qty:
                     quantity -= qty
-                    sold.append([qty,stock.json()["price"]])
+                    sold.append(
+                        {"quantity": qty, "price": stock.json()["price"]})
                     try:
                         db.session.delete(stock)
                         db.session.commit()
@@ -188,17 +195,11 @@ def update_order():
                             }
                         ), 500
                 else:
-                    sold.append([quantity,stock.json()["price"]])
+                    sold.append(
+                        {"quantity": quantity, "price": stock.json()["price"]})
                     try:
                         stock.quantity -= quantity
                         db.session.commit()
-                    
-                        return jsonify(
-                            {
-                                "code": 200,
-                                "data": [stocks for stocks in sold]
-                            }
-                        ), 200 
                     except:
                         return jsonify(
                             {
@@ -209,7 +210,13 @@ def update_order():
                                 "message": "An error occurred editing the stock."
                             }
                         ), 501
-
+                    print(sold)
+                    return jsonify(
+                        {
+                            "code": 200,
+                            "data": sold
+                        }
+                    ), 200
 
     except Exception as e:
         return jsonify(
