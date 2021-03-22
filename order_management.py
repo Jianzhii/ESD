@@ -11,9 +11,9 @@ import sys
 import requests
 from invokes import invoke_http
 
-""" import amqp_setup
+import amqp_setup
 import pika
-import json """
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -64,9 +64,7 @@ def buy_stocks():
                     }
                 ), 200
                 # update user portfolio
-
-            # Check if user has sufficient funds
-            # HTTP request to user funds to get boolean
+                
 
         except Exception as e:
             # Unexpected error in code
@@ -97,6 +95,8 @@ def processBuy(customer_id, stock_id, pricePerStock, qty, amount):
         "action": "SPEND",
         "amount": amount
     }
+
+    # Checking funds availability 
     avail = invoke_http(funds_url + customer_id, method="PUT", json=json)
 
     if avail['code'] not in range(200, 300):
@@ -109,6 +109,8 @@ def processBuy(customer_id, stock_id, pricePerStock, qty, amount):
             "price": pricePerStock,
             "quantity": qty
         }
+
+        # Updating portfolio on purchase
         avail = invoke_http(portfolio_url, method="POST", json=json)
         if avail['code'] not in range(200, 300):
             return avail
@@ -164,9 +166,6 @@ def sell_stocks():
                 ), 201
                 # update user portfolio
 
-            # Check if user has sufficient funds
-            # HTTP request to user funds to get boolean
-
         except Exception as e:
             # Unexpected error in code
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -195,6 +194,8 @@ def processSell(customer_id, stock_id, qty, amount):
         "stock_id": stock_id,
         "quantity": qty
     }
+
+    # Checking on stocks availability in portfolio and update accordingly
     stocks = invoke_http(portfolio_url, method="PUT", json=json)
 
     if stocks['code'] not in range(200, 300):
@@ -205,6 +206,8 @@ def processSell(customer_id, stock_id, qty, amount):
             "action": "LOAD",
             "amount": amount
         }
+
+        # Updating funds after successful sales
         invoke_http(funds_url + customer_id, method="PUT", json=json)
         return stocks
 
