@@ -1,4 +1,12 @@
 # pip install -r requirements.txt
+# https://rapidapi.com/blog/yahoo-finance-api-python/
+# seaborn documentation for doing the linegraph - https://seaborn.pydata.org/api.html
+# github libraries - gotta see what you need https://github.com/topics/yahoo-finance-api
+
+# pip install yahoo-finance
+# https://github.com/lukaszbanasiak/yahoo-finance
+
+
 # 1. library imports
 import seaborn as sns
 import matplotlib.pyplot as plt
