@@ -19,11 +19,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-    <!-- do we need this section!! -->
-    <!-- Custom JavaScript -->
-    <script src="grocery.js"></script>
-    <!--  -->
-
     <style>
         /* YOUR CSS CODE GOES HERE */
         body {
@@ -55,6 +50,7 @@
             justify-content: center;
         }
     </style>
+    <link href="dashboard.css" rel="stylesheet">	
 
 </head>
 
@@ -77,21 +73,23 @@
     </nav>
     <div class="container-fluid">
         <div class="row align-items-end">
-            <div class = "col-9">
-                <br>
-                <p>In the past 24hrs</p>
-                <h3>Market is down <span id="down">-0.41%</span></h3>
-               
-            </div>  
-            <div class = "col">
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search for stocks" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+				  <h1 class="h2">Dashboard</h1>
+				  <div class="btn-toolbar mb-2 mb-md-0">
+					<div class="btn-group me-2">
+					  <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+					  <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+					</div>
+					<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+					  <span data-feather="calendar"></span>
+					  This week
+					</button>
+				  </div>
+				</div>
+			<canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
         </div>
     </div>  
-
     <br>
 
     <table class="table">
@@ -140,7 +138,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
-
+	<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
+	// where the chart values are stored
+	<script src="dashboard.js"></script>
 </body>
 
 </html>
