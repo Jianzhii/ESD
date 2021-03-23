@@ -12,7 +12,6 @@ import json
 import yfinance as yf
 
 import requests
-from invokes import invoke_http
 
 app = Flask(__name__)
 CORS(app)
@@ -60,7 +59,7 @@ def market_summary():
 
         return jsonify({
             "code": 500,
-            "message": "Error getting top 10 gainers and loser with the following error: " + ex_str
+            "message": "Error getting top 10 gainers and loser with the following error: \n" + ex_str
         }), 500
 
 
@@ -82,6 +81,7 @@ def stock_info(stock_id):
             {
                 "code": 200,
                 "results": {
+                    "name": stock_info['longName'],
                     "previousClose": stock_info['previousClose'],
                     "open": stock_info['open'],
                     "volume": stock_info['volume'],
@@ -90,6 +90,7 @@ def stock_info(stock_id):
                     "sell_qty": stock_info['askSize'],
                     "buy_price": stock_info['bid'],
                     "buy_qty": stock_info['bidSize'],
+                    "marketCap": stock_info['marketCap'],
                     "historical_data": {
                         "one_day": {
                             "date": one_day.index.values.tolist(),
@@ -118,7 +119,7 @@ def stock_info(stock_id):
 
         return jsonify({
             "code": 500,
-            "message": "Error getting stock information with the following error: " + ex_str
+            "message": "Error getting stock information with the following error: \n" + ex_str
         }), 500
 
 
