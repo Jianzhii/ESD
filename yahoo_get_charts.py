@@ -87,7 +87,7 @@ def attachEvents(inputdata):
 
 while len(symbol_string) <= 2:
 	# take in user data for raw_input
-        symbol_string = raw_input("Enter the stock symbol: ")
+        symbol_string = input("Enter the stock symbol: ")
 
 retdata = fetchStockData(symbol_string)
 
