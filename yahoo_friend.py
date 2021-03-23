@@ -60,13 +60,66 @@ def market_summary():
 
         return jsonify({
             "code": 500,
-            "message": "Error getting top 10 gainers and loser: " + ex_str
+            "message": "Error getting top 10 gainers and loser with the following error: " + ex_str
         }), 500
 
 
 # To get information on the stock 
 @app.route("/stock/<string:stock_id>")
 def stock_info(stock_id):
+
+    print("----- Getting individual stock information -----")
+
+    try: 
+        stock = yf.Ticker(stock_id)
+        stock_info = stock.info
+
+        one_day = stock.history(period='1d')
+        one_month = stock.history(period='1mo')
+        six_month = stock.history(period='6mo')
+        
+        return jsonify(
+            {
+                "code": 200,
+                "results": {
+                    "previousClose": stock_info['previousClose'],
+                    "open": stock_info['open'],
+                    "volume": stock_info['volume'],
+                    "averageVolume": stock_info['averageVolume'],
+                    "sell_price": stock_info['ask'],
+                    "sell_qty": stock_info['askSize'],
+                    "buy_price": stock_info['bid'],
+                    "buy_qty": stock_info['bidSize'],
+                    "historical_data": {
+                        "one_day": {
+                            "date": one_day.index.values.tolist(),
+                            "price": one_day['Close'].tolist()
+                        },
+                        "one_month": {
+                            "date": one_month.index.values.tolist(),
+                            "price": one_month['Close'].tolist()
+                        },
+                        "six_month": {
+                            "date": six_month.index.values.tolist(),
+                            "price": six_month['Close'].tolist()
+                        }
+                    }
+                }
+            }
+        )
+
+    except Exception as e:
+        # Unexpected error in code
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        ex_str = str(e) + " at " + str(exc_type) + ": " + \
+            fname + ": line " + str(exc_tb.tb_lineno)
+        print(ex_str)
+
+        return jsonify({
+            "code": 500,
+            "message": "Error getting stock information with the following error: " + ex_str
+        }), 500
 
 
 if __name__ == '__main__':
