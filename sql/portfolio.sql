@@ -21,21 +21,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `order`
 --
-CREATE DATABASE IF NOT EXISTS `funds` DEFAULT CHARACTER SET UTF8MB4 COLLATE utf8mb4_0900_ai_ci;
-USE `funds`;
+CREATE DATABASE IF NOT EXISTS `portfolio` DEFAULT CHARACTER SET UTF8MB4 COLLATE utf8mb4_0900_ai_ci;
+USE `portfolio`;
 -- --------------------------------------------------------
 --
 -- Table structure for table `portfolio`
 --
-DROP TABLE IF EXISTS `funds`;
-CREATE TABLE IF NOT EXISTS `funds` (
-  `customer_id` varchar(32) NOT NULL,
-  `balance` decimal(10, 2) NOT NULL,
-  `spent` decimal(10, 2) NOT NULL,
-  PRIMARY KEY (`customer_id`)
+DROP TABLE IF EXISTS `portfolio`;
+CREATE TABLE IF NOT EXISTS `portfolio` (
+  `order_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(32) NOT NULL,
+  `stock_id` varchar(10) NOT NULL,
+  `price` decimal(10, 2) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  PRIMARY KEY (`order_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = UTF8MB4;
 --
 -- Dumping data for table `portfolio`
 --
-INSERT INTO `funds` (`customer_id`, `balance`, `spent`)
-VALUES ('Apple TAN', '500.00', '0.00');
+INSERT INTO `portfolio` (
+    `order_id`,
+    `user_id`,
+    `stock_id`,
+    `price`,
+    `quantity`
+  )
+VALUES (NULL, 'Apple TAN', 'GME', '220.14', '10');
