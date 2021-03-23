@@ -22,6 +22,7 @@ CORS(app)
 ############# URLS to other microservices ####################
 funds_url = "http://localhost:5002/funds/"
 portfolio_url = "http://localhost:5001/portfolio"
+#profile_url = "http://localhost:5003/profile"
 yahoo_friends_url = ""
 ##############################################################
 

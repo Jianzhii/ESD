@@ -24,13 +24,13 @@ CORS(app)
 class Fund(db.Model):
     __tablename__ = 'funds'
 
-    customer_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     balance = db.Column(db.Float(precision=2), nullable=False)
     spent = db.Column(db.Float(precision=2), nullable=False)
 
     def json(self):
         return {
-            'customer_id': self.customer_id,
+            'user_id': self.user_id,
             'balance': self.balance,
             'spent': self.spent
         }
@@ -56,9 +56,9 @@ def get_all():
     ), 404
 
 
-@app.route("/funds/<string:customer_id>")
-def find_by_customer_id(customer_id):
-    funds = Fund.query.filter_by(customer_id=customer_id).first()
+@app.route("/funds/<string:user_id>")
+def find_by_user_id(user_id):
+    funds = Fund.query.filter_by(user_id=user_id).first()
     if funds:
         return jsonify(
             {
@@ -70,31 +70,31 @@ def find_by_customer_id(customer_id):
         {
             "code": 404,
             "data": {
-                "customer_id": customer_id
+                "user_id": user_id
             },
             "message": "No portfolio found."
         }
     ), 404
 
 
-@app.route("/funds/<string:customer_id>", methods=['POST'])
-def create_fund(customer_id):
+@app.route("/funds/<string:user_id>", methods=['POST'])
+def create_fund(cuuser_idstomer_id):
     portfolio = Fund.query.filter_by(
-        customer_id=customer_id).first()
+        user_id=user_id).first()
     if portfolio:
         return jsonify(
             {
                 "code": 404,
                 "data": {
-                    "customer_id": customer_id
+                    "user_id": user_id
                 },
-                "message": "Customer already exists."
+                "message": "User already exists."
             }
         ), 404
 
     # update status
     data = request.get_json()
-    fund = Fund(customer_id=customer_id, spent=0.00, **data)
+    fund = Fund(user_id=user_id, spent=0.00, **data)
     try:
         db.session.add(fund)
         db.session.commit()
@@ -114,17 +114,17 @@ def create_fund(customer_id):
     ), 201
 
 
-@app.route("/funds/<string:customer_id>", methods=['PUT'])
-def update_order(customer_id):
+@app.route("/funds/<string:user_id>", methods=['PUT'])
+def update_order(user_id):
     try:
         fund = Fund.query.filter_by(
-            customer_id=customer_id).first()
+            user_id=user_id).first()
         if not fund:
             return jsonify(
                 {
                     "code": 404,
                     "data": {
-                        "customer_id": customer_id
+                        "user_id": user_id
                     },
                     "message": "Customer not found."
                 }
@@ -148,7 +148,7 @@ def update_order(customer_id):
                     {
                         "code": 501,
                         "data": {
-                            "customer_id": customer_id,
+                            "user_id": user_id,
                             "balance": bal
                         },
                         "message": "Not enough available funds. Please top-up."
@@ -170,7 +170,7 @@ def update_order(customer_id):
             {
                 "code": 500,
                 "data": {
-                    "customer_id": customer_id,
+                    "user_id": user_id,
                 },
                 "message": "An error occurred while updating the funds. " + str(e)
             }

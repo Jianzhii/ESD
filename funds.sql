@@ -29,13 +29,13 @@ USE `funds`;
 --
 DROP TABLE IF EXISTS `funds`;
 CREATE TABLE IF NOT EXISTS `funds` (
-  `customer_id` varchar(32) NOT NULL,
+  `user_id` varchar(32) NOT NULL,
   `balance` decimal(10, 2) NOT NULL,
   `spent` decimal(10, 2) NOT NULL,
-  PRIMARY KEY (`customer_id`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = UTF8MB4;
 --
 -- Dumping data for table `portfolio`
 --
-INSERT INTO `funds` (`customer_id`, `balance`, `spent`)
+INSERT INTO `funds` (`user_id`, `balance`, `spent`)
 VALUES ('Apple TAN', '500.00', '0.00');

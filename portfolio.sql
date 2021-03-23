@@ -30,7 +30,7 @@ USE `portfolio`;
 DROP TABLE IF EXISTS `portfolio`;
 CREATE TABLE IF NOT EXISTS `portfolio` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_id` varchar(32) NOT NULL,
+  `user_id` varchar(32) NOT NULL,
   `stock_id` varchar(10) NOT NULL,
   `price` decimal(10, 2) NOT NULL,
   `quantity` int(11) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `portfolio` (
 --
 INSERT INTO `portfolio` (
     `order_id`,
-    `customer_id`,
+    `user_id`,
     `stock_id`,
     `price`,
     `quantity`
