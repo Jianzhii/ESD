@@ -1,0 +1,132 @@
+version: "3.8"
+
+volumes:
+  rabbitmq_data:
+
+services:
+ 
+  ###################################
+  # Profile: The Profile microservice
+  ###################################
+  profile:
+    build:
+      context: ./
+      dockerfile: profile.Dockerfile
+    image: asher935/profile:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/profile
+      PYTHONUNBUFFERED: 1
+ 
+  ###################################
+  # Funds: The Funds microservice
+  ###################################
+  funds:
+    build:
+      context: ./
+      dockerfile: funds.Dockerfile
+    image: asher935/funds:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/funds
+      PYTHONUNBUFFERED: 1
+
+
+  ###################################
+  # Portfolio: The Portfolio microservice
+  ###################################
+  portfolio:
+    build:
+      context: ./
+      dockerfile: portfolio.Dockerfile
+    image: asher935/portfolio:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/portfolio
+      PYTHONUNBUFFERED: 1
+
+  #################################################
+  # Authenticate User: The Authenticate User microservice
+  #################################################
+  auth_user:
+    build:
+      context: ./
+      dockerfile: auth_user.Dockerfile
+    image: asher935/auth_user:esd
+    restart: always
+    depends_on:
+      - funds
+      - profile
+    environment:
+        PYTHONUNBUFFERED: 1
+
+  ####################################
+  # RabbitMQ: The messaging broker   
+  ####################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
+      
+  #################################################
+  # Activity Log: The Activity Log microservice
+  #################################################
+  activity_log:
+    build:
+      context: ./
+      dockerfile: activity_log.Dockerfile
+    image: asher935/activity_log:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+  ###################################
+  # Error: The Error microservice
+  ###################################
+  error:
+    build:
+      context: ./
+      dockerfile: error.Dockerfile
+    image: asher935/error:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+  ###############################################
+  # Order Management: The Order Management microservice
+  ###############################################
+  order_management:
+    build:
+      context: ./
+      dockerfile: order_management.Dockerfile
+    image: asher935/order_management:esd
+    restart: always
+    depends_on:
+      - funds
+      - portfolio
+      - activity_log
+      - error
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      portfolio_URL: http://portfolio:5001/portfolio
+      funds_URL: http://funds:5002/funds
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5100:5100"
+
+ 
