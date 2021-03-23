@@ -26,7 +26,7 @@ class Portfolio(db.Model):
     __tablename__ = 'portfolio'
 
     order_id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
     stock_id = db.Column(db.String(32), nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
@@ -34,7 +34,7 @@ class Portfolio(db.Model):
     def json(self):
         return {
             'order_id': self.order_id,
-            'customer_id': self.customer_id,
+            'user_id': self.user_id,
             'stock_id': self.stock_id,
             'price': self.price,
             'quantity': self.quantity
@@ -61,9 +61,9 @@ def get_all():
     ), 404
 
 
-@app.route("/portfolio/<string:customer_id>")
-def find_by_customer_id(customer_id):
-    portfolio = Portfolio.query.filter_by(customer_id=customer_id)
+@app.route("/portfolio/<string:user_id>")
+def find_by_user_id(user_id):
+    portfolio = Portfolio.query.filter_by(user_id=user_id)
     if portfolio:
         return jsonify(
             {
@@ -75,17 +75,17 @@ def find_by_customer_id(customer_id):
         {
             "code": 404,
             "data": {
-                "customer_id": customer_id
+                "user_id": user_id
             },
             "message": "No portfolio found."
         }
     ), 404
 
 
-@app.route("/portfolio/<string:customer_id>/<string:stock_id>")
-def find_by_portfolio_id(customer_id, stock_id):
+@app.route("/portfolio/<string:user_id>/<string:stock_id>")
+def find_by_portfolio_id(user_id, stock_id):
     portfolio = Portfolio.query.filter_by(
-        customer_id=customer_id).filter_by(stock_id=stock_id)
+        user_id=user_id).filter_by(stock_id=stock_id)
 
     if portfolio:
         return jsonify(
@@ -98,7 +98,7 @@ def find_by_portfolio_id(customer_id, stock_id):
         {
             "code": 404,
             "data": {
-                "customer_id": customer_id
+                "user_id": user_id
             },
             "message": "No portfolio found."
         }
@@ -136,12 +136,12 @@ def create_order():
 
 @app.route("/portfolio", methods=['PUT'])
 def update_order():
-    customer_id = request.json.get('customer_id', None)
+    user_id = request.json.get('user_id', None)
     stock_id = request.json.get('stock_id', None)
 
     try:
         portfolio = Portfolio.query.filter_by(
-            customer_id=customer_id).filter_by(stock_id=stock_id)
+            user_id=user_id).filter_by(stock_id=stock_id)
         if not portfolio:
             return jsonify(
                 {
@@ -165,7 +165,7 @@ def update_order():
                 {
                     "code": 501,
                     "data": {
-                        "customer_id": customer_id,
+                        "user_id": user_id,
                         "stock_id": stock_id,
                         "balance": total
                     },
@@ -223,7 +223,7 @@ def update_order():
             {
                 "code": 500,
                 "data": {
-                    "customer_id": customer_id,
+                    "user_id": user_id,
                     "stock_id": stock_id
 
                 },

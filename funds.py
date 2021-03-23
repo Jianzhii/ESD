@@ -78,7 +78,7 @@ def find_by_user_id(user_id):
 
 
 @app.route("/funds/<string:user_id>", methods=['POST'])
-def create_fund(cuuser_idstomer_id):
+def create_fund(user_id):
     portfolio = Fund.query.filter_by(
         user_id=user_id).first()
     if portfolio:
@@ -102,7 +102,7 @@ def create_fund(cuuser_idstomer_id):
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred while creating the order. " + str(e)
+                "message": "An error occurred while creating the fund. " + str(e)
             }
         ), 500
 
