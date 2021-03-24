@@ -53,6 +53,14 @@
         #warning{
             justify-content: center;
         }
+
+        #g_change {
+            color: green;
+        }
+
+        #l_change{
+            color: red;
+        }
     </style>
 
 </head>
@@ -156,7 +164,6 @@
                 var gainers = result.results.gainers;
 
                 for (gainer of gainers) {
-
                     // Calling stock information microservice 
                     $('#gainers').stocks_info(gainer['symbol']);
                     
@@ -165,7 +172,6 @@
                 var losers = result.results.losers;
 
                 for (loser of losers) {
-
                     // Calling stock information microservice
                     $('#losers').stocks_info(loser['symbol']);
                 }
@@ -195,13 +201,22 @@
 
                     const info_result = await info_response.json();
                     if (info_response.status === 200) {
-                        var stock_info = info_result.results
+                        var stock_info = info_result.results;
                         
+                        change = (((parseFloat(stock_info['historical_data']['one_day']['price']) - parseFloat(stock_info['previousClose'])) / parseFloat(stock_info['previousClose'])) * 100).toFixed(2);
+
+                        if (change > 0) {
+                            id = 'g_change'
+                        }
+                        else {
+                            id = 'l_change'
+                        };
+
                         var row = '<tr>';
                         row += "<td>" + symbol + "</td>" +
                                "<td>" + stock_info['name'] + "</td>" + 
                                "<td> $" + stock_info['previousClose'] + "</td>" +
-                               "<td> {stand by, will add in asap} </td>" +
+                               "<td id=" + id + ">" + change + "% </td>" +
                                "<td>" + stock_info['marketCap'] + "</td>" +
                                "</tr>";
                         this.append(row);
