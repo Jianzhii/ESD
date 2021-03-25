@@ -4,6 +4,8 @@
 
 from flask import Flask, request, session, redirect
 from flask_cors import CORS
+import os, sys
+from os import environ
 from invokes import invoke_http
 
 from google.oauth2 import id_token
@@ -15,9 +17,9 @@ app.secret_key = "SrocErkkgz0zd15PykMxuSUwtzidl2Yd"
 CORS(app)
 
 ############# URLS to other microservices ####################
-funds_url = "http://localhost:5002/funds/"
-portfolio_url = "http://localhost:5001/portfolio"
-profile_url = "http://localhost:5003/profile/"
+#portfolio_url = environ.get('portfolio_URL') or "http://localhost:5001/portfolio" 
+funds_url = environ.get('funds_URL') or "http://localhost:5002/funds" 
+profile_url = environ.get('portfolio_URL') or "http://localhost:5003/profile"
 yahoo_friends_url = ""
 ##############################################################
 

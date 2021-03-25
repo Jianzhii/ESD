@@ -4,7 +4,6 @@ volumes:
   rabbitmq_data:
 
 services:
- 
   ###################################
   # Profile: The Profile microservice
   ###################################
@@ -17,7 +16,9 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/profile
       PYTHONUNBUFFERED: 1
- 
+    ports:
+      - "5003:5003"
+
   ###################################
   # Funds: The Funds microservice
   ###################################
@@ -30,8 +31,9 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/funds
       PYTHONUNBUFFERED: 1
-
-
+    ports:
+      - "5002:5002"
+      
   ###################################
   # Portfolio: The Portfolio microservice
   ###################################
@@ -44,6 +46,8 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/portfolio
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
 
   #################################################
   # Authenticate User: The Authenticate User microservice
@@ -58,10 +62,14 @@ services:
       - funds
       - profile
     environment:
-        PYTHONUNBUFFERED: 1
+      profile_URL: http://portfolio:5003/profile
+      funds_URL: http://funds:5002/funds
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5200:5200"
 
   ####################################
-  # RabbitMQ: The messaging broker   
+  # RabbitMQ: The messaging broker
   ####################################
   rabbitmq:
     image: rabbitmq:3-management
@@ -70,9 +78,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    volumes: 
+    volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      
+
   #################################################
   # Activity Log: The Activity Log microservice
   #################################################
@@ -128,5 +136,3 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5100:5100"
-
- 

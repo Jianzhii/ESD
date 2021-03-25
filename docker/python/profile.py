@@ -139,7 +139,7 @@ def update_order(user_id):
         data = request.get_json()
         name = data["name"]
         email = data["email"]
-        profile = Profile(user_id = user_id, name = name, email = email)
+        profile = Profile(user_id=user_id, name=name, email=email)
         db.session.commit()
 
         return jsonify(

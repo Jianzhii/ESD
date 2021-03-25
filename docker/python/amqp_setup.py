@@ -1,10 +1,11 @@
 import pika
+from os import environ
 
 # These module-level variables are initialized whenever a new instance of python interpreter imports the module;
 # In each instance of python interpreter (i.e., a program run), the same module is only imported once (guaranteed by the interpreter).
 
-hostname = "localhost" # default hostname
-port = 5672 # default port
+hostname = environ.get('rabbit_host') or 'localhost'
+port = environ.get('rabbit_port') or 5672
 # connect to the broker and set up a communication channel in the connection
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(
@@ -35,18 +36,18 @@ channel.queue_declare(queue=queue_name, durable=True)
     # 'durable' makes the queue survive broker restarts
 
 #bind Error queue
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='*.error') 
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='*.error')
     # bind the queue to the exchange via the key
     # any routing_key with two words and ending with '.error' will be matched
 
 ############   Activity_Log queue    #############
 #delcare Activity_Log queue
-queue_name = 'Activity_Log'
+queue_name = 'Activity_Log' 
 channel.queue_declare(queue=queue_name, durable=True)
     # 'durable' makes the queue survive broker restarts
 
 #bind Activity_Log queue
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='order.*') 
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#') 
     # bind the queue to the exchange via the key
     # 'routing_key=#' => any routing_key would be matched
     
@@ -65,7 +66,7 @@ def check_setup():
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname, port=port))
     if channel.is_closed:
         channel = connection.channel()
-        channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype)
+        channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype, durable=True)
 
 
 def is_connection_open(connection):

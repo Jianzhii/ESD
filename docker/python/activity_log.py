@@ -7,7 +7,7 @@ import os
 
 import amqp_setup
 
-monitorBindingKey='order.*'
+monitorBindingKey='#'
 
 def receiveOrderLog():
     amqp_setup.check_setup()
