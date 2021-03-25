@@ -1,7 +1,3 @@
-<!--
-    Name: Asher Leong 
-    Email: asherleong.2019 
--->
 <!DOCTYPE html>
 <html>
 
@@ -19,10 +15,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-    <!-- do we need this section!! -->
-    <!-- Custom JavaScript -->
-    <script src="grocery.js"></script>
-    <!--  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
 
     <style>
         /* YOUR CSS CODE GOES HERE */
@@ -53,6 +52,14 @@
 
         #warning{
             justify-content: center;
+        }
+
+        #g_change {
+            color: green;
+        }
+
+        #l_change{
+            color: red;
         }
     </style>
 
@@ -94,53 +101,136 @@
 
     <br>
 
+    <h4>Top 10 Gainers</h4>
     <table class="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">Stock ID</th>
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Change</th>
             <th scope="col">Market Cap</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td><button type="button" class="btn btn-danger">GME</button> Gamestock Corp</td>
-            <td>$195.00</td>
-            <td>-11.82%</td>
-            <td>13.68B USD</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td><button type="button" class="btn btn-secondary">APPL</button> Apple Inc</td>
-            <td>$126.22</td>
-            <td>+1.81%</td>
-            <td>2.13T USD</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td><button type="button" class="btn btn-success">NVDA</button> NVIDIA Corporation</td>
-            <td>$536.17</td>
-            <td>+1.61%</td>
-            <td>332.63B USD</td>
-          </tr>
+        <tbody id='gainers'>
         </tbody>
-      </table>
+    </table>
+
+    <h4>Top 10 Losers</h4>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Stock ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Change</th>
+            <th scope="col">Market Cap</th>
+          </tr>
+        </thead>
+        <tbody id='losers'>
+        </tbody>
+    </table>
 
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        crossorigin="anonymous"></script> -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
 
 </body>
+
+<script>
+
+
+    // Calling market information microservice
+    $(async() => {
+        var stockID_url = "http://127.0.0.1:5900/market";
+
+        try {
+            const response = 
+            await fetch(
+                stockID_url, {method: 'GET'}
+            );
+
+            const result = await response.json();
+            if (response.status === 200) {
+
+                var gainers = result.results.gainers;
+
+                for (gainer of gainers) {
+                    // Calling stock information microservice 
+                    $('#gainers').stocks_info(gainer['symbol']);
+                    
+                }
+
+                var losers = result.results.losers;
+
+                for (loser of losers) {
+                    // Calling stock information microservice
+                    $('#losers').stocks_info(loser['symbol']);
+                }
+            }
+        }
+
+        catch (error) {
+            showError
+            ('There is a problem retrieving market data, please try again later.<br />' + error);
+        }
+
+
+    });
+
+
+    (function($) {
+        $.fn.stocks_info = function(symbol) {
+            $(async() => {
+                
+                var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
+
+                try {
+                    const info_response = 
+                    await fetch(
+                        stockInfo_url, {method: 'GET'}
+                    );
+
+                    const info_result = await info_response.json();
+                    if (info_response.status === 200) {
+                        var stock_info = info_result.results;
+                        
+                        change = (((parseFloat(stock_info['historical_data']['one_day']['price']) - parseFloat(stock_info['previousClose'])) / parseFloat(stock_info['previousClose'])) * 100).toFixed(2);
+
+                        if (change > 0) {
+                            id = 'g_change'
+                        }
+                        else {
+                            id = 'l_change'
+                        };
+
+                        var row = '<tr>';
+                        row += "<td>" + symbol + "</td>" +
+                               "<td>" + stock_info['name'] + "</td>" + 
+                               "<td> $" + stock_info['previousClose'] + "</td>" +
+                               "<td id=" + id + ">" + change + "% </td>" +
+                               "<td>" + stock_info['marketCap'] + "</td>" +
+                               "</tr>";
+                        this.append(row);
+                    }
+                }   
+
+                catch (error) {
+                    showError
+                    ('There is a problem retrieving stock data, please try again later.<br />' + error);
+                }
+             })
+        }
+    })(jQuery);
+
+</script>
 
 </html>
