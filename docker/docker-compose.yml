@@ -68,6 +68,20 @@ services:
     ports:
       - "5200:5200"
 
+  #################################################
+  # Yahoo Friend: The Yahoo Friend microservice
+  #################################################
+  yahoo_friend:
+    build:
+      context: ./
+      dockerfile: yahoo_friend.Dockerfile
+    image: asher935/yahoo_friend:esd
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5900:5900"
+
   ####################################
   # RabbitMQ: The messaging broker
   ####################################
