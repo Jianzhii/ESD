@@ -82,6 +82,7 @@
             </div>
         </div>
     </nav>
+
     <div class="container-fluid">
         <div class="row align-items-end">
             <div class = "col-9">
@@ -102,37 +103,60 @@
 
     <div class='container d-flex justify-content-center' id='error'></div>
 
-    <h4>Top 10 Gainers</h4>
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Stock ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Change</th>
-            <th scope="col">Market Cap</th>
-          </tr>
-        </thead>
-        <tbody id='gainers'>
-        </tbody>
-    </table>
-
-    <h4>Top 10 Losers</h4>
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Stock ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Change</th>
-            <th scope="col">Market Cap</th>
-          </tr>
-        </thead>
-        <tbody id='losers'>
-        </tbody>
-    </table>
-
-
+    <div class='container'>
+        <h4>Top 10 Gainers</h4>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Stock ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Change</th>
+                <th scope="col">Market Cap</th>
+              </tr>
+            </thead>
+            <tbody id='gainers'>
+                <tr id='g1'></tr>
+                <tr id='g2'></tr>
+                <tr id='g3'></tr>
+                <tr id='g4'></tr>
+                <tr id='g5'></tr>
+                <tr id='g6'></tr>
+                <tr id='g7'></tr>
+                <tr id='g8'></tr>
+                <tr id='g9'></tr>
+                <tr id='g10'></tr>
+            </tbody>
+        </table>
+    
+        <h4>Top 10 Losers</h4>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>  
+                <th scope="col">Stock ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Change</th>
+                <th scope="col">Market Cap</th>
+              </tr>
+            </thead>
+            <tbody id='losers'>
+                <tr id='l1'></tr>
+                <tr id='l2'></tr>
+                <tr id='l3'></tr>
+                <tr id='l4'></tr>
+                <tr id='l5'></tr>
+                <tr id='l6'></tr>
+                <tr id='l7'></tr>
+                <tr id='l8'></tr>
+                <tr id='l9'></tr>
+                <tr id='l10'></tr>
+            </tbody>
+        </table>
+    </div>
+   
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -163,18 +187,22 @@
             if (response.status === 200) {
 
                 var gainers = result.results.gainers;
-
+                counter = 1
                 for (gainer of gainers) {
                     // Calling stock information microservice 
-                    $('#gainers').stocks_info(gainer['symbol']);
+                    id = '#g'+counter
+                    $(id).stocks_info(gainer['symbol'], counter);
+                    counter += 1
                     
                 }
 
                 var losers = result.results.losers;
-
+                counter = 1;
                 for (loser of losers) {
                     // Calling stock information microservice
-                    $('#losers').stocks_info(loser['symbol']);
+                    id = '#l' + counter.toString();
+                    $(id).stocks_info(loser['symbol'] , counter);
+                    counter += parseInt(1);
                 }
             }
             else if (response.status == 500) {
@@ -195,7 +223,7 @@
 
 
     (function($) {
-        $.fn.stocks_info = function(symbol) {
+        $.fn.stocks_info = function(symbol, counter) {
             $(async() => {
                 
                 var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
@@ -219,13 +247,13 @@
                             id = 'l_change'
                         };
 
-                        var row = '<tr>';
-                        row += "<td>" + symbol + "</td>" +
+                        var row = '';
+                        row += "<td>" + counter + "</td>" +
+                               "<td>" + symbol + "</td>" +
                                "<td>" + stock_info['name'] + "</td>" + 
                                "<td> $" + stock_info['previousClose'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "</td>" +
                                "<td id=" + id + ">" + change + "% </td>" +
-                               "<td>" + stock_info['marketCap'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "</td>" +
-                               "</tr>";
+                               "<td>" + stock_info['marketCap'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "</td>";
                         this.append(row);
                     }
                     else if (info_response.status == 500) {
@@ -238,7 +266,7 @@
 
                 catch (error) {
                     showError
-                    ('There is a problem retrieving stock data, please try again later.<br />' + error);
+                    (`There is a problem retrieving ${symbol} data, please try again later.<br />` + error);
                 }
              })
         }
