@@ -215,9 +215,9 @@
                         var row = '<tr>';
                         row += "<td>" + symbol + "</td>" +
                                "<td>" + stock_info['name'] + "</td>" + 
-                               "<td> $" + stock_info['previousClose'] + "</td>" +
+                               "<td> $" + stock_info['previousClose'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "</td>" +
                                "<td id=" + id + ">" + change + "% </td>" +
-                               "<td>" + stock_info['marketCap'] + "</td>" +
+                               "<td>" + stock_info['marketCap'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "</td>" +
                                "</tr>";
                         this.append(row);
                     }

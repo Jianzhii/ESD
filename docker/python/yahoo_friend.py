@@ -24,8 +24,11 @@ headers = {
     }
 
 
+# second api key: c76e11c753msha38f73a10c16b1dp1443c3jsndf66c4b08501
+
+
 # To get the top 10 gainers and losers of the day
-@app.route("/market")
+@app.route("/market")   
 def market_summary():
 
     print("------ Getting stock symbols for top 10 gainers and losers -----")
@@ -67,13 +70,14 @@ def market_summary():
 @app.route("/stock/<string:stock_id>")
 def stock_info(stock_id):
 
-    print("----- Getting individual stock information -----")
+    print(f"----- Getting {stock_id} information -----")
 
     try: 
         stock = yf.Ticker(stock_id)
         stock_info = stock.info
 
         one_day = stock.history(period='1d')
+        one_week = stock.history(period='1wk')
         one_month = stock.history(period='1mo')
         six_month = stock.history(period='6mo')
         
@@ -96,6 +100,10 @@ def stock_info(stock_id):
                             "date": one_day.index.values.tolist(),
                             "price": one_day['Close'].tolist()
                         },
+                        "one_week": {
+                            "date": one_week.index.values.tolist(),
+                            "price": one_week['Close'].tolist()
+                        },
                         "one_month": {
                             "date": one_month.index.values.tolist(),
                             "price": one_month['Close'].tolist()
@@ -108,6 +116,8 @@ def stock_info(stock_id):
                 }
             }
         )
+
+
 
     except Exception as e:
         # Unexpected error in code
