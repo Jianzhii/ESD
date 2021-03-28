@@ -39,16 +39,14 @@ def buy_stocks():
     if request.is_json:
         try:
             buy_order = request.get_json()
-            pricePerStock = getPrice(buy_order["stock_id"])
+            pricePerStock = buy_order["price"]
             qty = buy_order["quantity"]
             user_id = buy_order["user_id"]
             stock_id = buy_order["stock_id"]
-            amount = pricePerStock * qty
-            user_id = buy_order["user_id"]
+            amount = float(pricePerStock) * float(qty)
             
             print(user_id, stock_id,
                                 pricePerStock, qty, amount)
-            # check yahoo friends??
 
             result = processBuy(user_id, stock_id,
                                 pricePerStock, qty, amount)
@@ -145,7 +143,8 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         json = {
             "user_id": user_id,
             "stock_id": stock_id,
-            "quantity": qty
+            "quantity": qty,
+            "price": pricePerStock
         }
 
         # Updating portfolio on purchase
@@ -169,12 +168,11 @@ def sell_stocks():
     if request.is_json:
         try:
             sell_order = request.get_json()
-            pricePerStock = getPrice(sell_order["stock_id"])
+            pricePerStock = sell_order["price"]
             qty = sell_order["quantity"]
             user_id = sell_order["user_id"]
             stock_id = sell_order["stock_id"]
-            amount = pricePerStock * qty
-            user_id = sell_order["user_id"]
+            amount = float(pricePerStock) * float(qty)
 
             # check yahoo friends??
 

@@ -21,6 +21,11 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
 
     <link href="dashboard.css" rel="stylesheet">	
+    <script src="dashboard.js"></script>
+
+    <script>
+        sessionStorage.setItem('stock_id','GME');
+    </script>
 
     <title>Document</title>
 
@@ -58,14 +63,27 @@
         <p id='error'></p>
 
         <br>
-        <p id='datetime'>Stock information as of: </p>
+
+        <div class='row mb-3'>
+            <div class='col'>
+                <p id='datetime'>Stock information as of: </p>
+            </div>
+            <div class='col d-flex justify-content-end'>
+                <button type="button" class="btn btn-primary mr-3" data-toggle="modal" data-target="#buyModal">
+                    Buy
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sellModal">
+                    Sell
+                </button>
+            </div>
+        </div>
 
         <div class='container'>
 
             <!-- Row -->
             <div class='row'>
 
-                <!-- Left Column (all quantitative information)-->
+                <!-- Top Section (all quantitative information)-->
 
                     <table class='table'>
                         <tbody>
@@ -113,20 +131,75 @@
             <br>
             <br>
 
-            <!-- Right Column (Graph)-->
+            <!-- Bottom Section (Graph)-->
             <div class='row'>
-                    <button type="button" class="btn btn-info mr-3" id='1d'>1 Day</button> 
-                    <button type="button" class="btn btn-info mr-3" id='1wk'>1 Week</button>
-                    <button type="button" class="btn btn-info mr-3" id='1mo'>1 Month</button>
-                    <button type="button" class="btn btn-info mr-3" id='6mo'>6 Months</button>
+                <button type="button" class="btn btn-info mr-3" id='1d'>1 Day</button> 
+                <button type="button" class="btn btn-info mr-3" id='1wk'>1 Week</button>
+                <button type="button" class="btn btn-info mr-3" id='1mo'>1 Month</button>
+                <button type="button" class="btn btn-info mr-3" id='6mo'>6 Months</button>
 
-                    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-                </div>
-
-
+                <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
             </div>
 
         </div>
+
+        <!-- Modals -->
+        <!-- Buy -->
+        <div class="modal fade" id="buyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="buyTitle">Buying </h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <label for='buyQty'>Please indicate the quantity of stocks you wish to purchase:</label>
+                    <input class="form-control me-2" placeholder="Quantity to purchase"  id='buyQty'>
+                    
+                    <br><br>
+
+                    <label for='buyPrice'>Please indicate the price per stock you wish to purchase at:</label>
+                    <input class="form-control me-2" placeholder="Price to purchase"  id='buyPrice'>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id='buyClose'>Close</button>
+                  <button type="button" class="btn btn-primary" onclick='buyStocks()'>Confirm</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- Sell -->
+        <div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="sellTitle">Selling</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="modal-body">
+                    <label for='sellQty'>Please indicate the quantity of stocks you wish to sell:</label>
+                    <input class="form-control me-2" placeholder="Quantity to sell"  id='sellQty'>
+                    
+                    <br><br>
+                    
+                    <label for='sellPrice'>Please indicate the price per stock you wish to sell at:</label>
+                    <input class="form-control me-2" placeholder="Price to sell"  id='sellPrice'>                
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id='sellClose'>Close</button>
+                  <button type="button" class="btn btn-primary" onclick='sellStocks()'>Confirm</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
     </div>
 
 
@@ -135,8 +208,10 @@
 
 <script>
     // Get Stock ID for the title 
-    document.getElementsByTagName("title")[0].innerText = sessionStorage.getItem('id');    
-    document.getElementById("title").innerText = sessionStorage.getItem('id');   
+    document.getElementsByTagName("title")[0].innerText = sessionStorage.getItem('stock_id');    
+    document.getElementById('buyTitle').innerText = "Buying " + sessionStorage.getItem('stock_id');
+    document.getElementById('sellTitle').innerText = "Selling " + sessionStorage.getItem('stock_id');
+    document.getElementById("title").innerText = sessionStorage.getItem('stock_id');   
 
     // Get current date and time 
     var currentdate = new Date(); 
@@ -154,7 +229,8 @@
 
     // Calling microservice for the stock information 
     $(async() => {
-        var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('id');
+        // var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('id');
+        var stockID_url = "http://127.0.0.1:5080/test";
 
         try {
             const response = 
@@ -230,34 +306,107 @@
         $('#error').append("<label style='color:red; text-align:center'>"+message+"</label>");
     };
 
-    function graph(date, price) {
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-            labels: date,
-            datasets: [{
-                data: price,
-                lineTension: 0,
-                backgroundColor: 'transparent',
-                borderColor: '#007bff',
-                borderWidth: 4,
-                pointBackgroundColor: '#007bff'
-            }]
-            },
-            options: {
-            scales: {
-                yAxes: [{
-                ticks: {
-                    beginAtZero: false
+    // Calling Microservice to buy stocks
+    function buyStocks(){
+        $(async() => {
+            
+            var user_id = 'Apple TAN';
+            var stock_id = sessionStorage.getItem('stock_id');
+            var buyPrice = document.getElementById('buyPrice').value;
+            var buyQty = document.getElementById('buyQty').value;
+
+            var buy_details = {
+                "user_id": user_id,
+                "stock_id": stock_id,
+                "quantity": buyQty,
+                "price": buyPrice
+            };
+
+            var stockID_url = "http://127.0.0.1:5100/order/buy";
+
+            try {
+                const response = 
+                await fetch(
+                    stockID_url, { 
+                        method: 'PUT',
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(buy_details) 
+                    }
+                );
+
+                const result = await response.json();
+                if (response.status === 200) {
+
+                    alert('Purchase order has been submitted for matching.');
+                    $('#buyClose').click();
+
                 }
-                }]
-            },
-            legend: {
-                display: false
+                else if (response.status == 500) {
+                    showError(result.message);
+                } 
+                else {
+                    throw response.status;
+                }
             }
+
+            catch (error) {
+                showError
+                (`There is a problem processing the purchase order, please try again later.<br />` + error);
             }
-        })
+
+        });
+    }
+
+
+    // Calling Microservice to sell stocks
+    function sellStocks(){
+        $(async() => {
+            
+            var user_id = 'Apple TAN';
+            var stock_id = sessionStorage.getItem('stock_id');
+            var sellPrice = document.getElementById('sellPrice').value;
+            var sellQty = document.getElementById('sellQty').value;
+
+            var sell_details = {
+                "user_id": user_id,
+                "stock_id": stock_id,
+                "quantity": sellPrice,
+                "price": sellQty
+            };
+
+            var stockID_url = "http://127.0.0.1:5100/order/sell";
+
+            try {
+                const response = 
+                await fetch(
+                    stockID_url, { 
+                        method: 'PUT',
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(sell_details) 
+                    }
+                );
+
+                const result = await response.json();
+                if (response.status === 200) {
+
+                    alert('Sales order has been submitted for matching.');
+                    $('#sellClose').click();
+
+                }
+                else if (response.status == 500) {
+                    showError(result.message);
+                } 
+                else {
+                    throw response.status;
+                }
+            }
+
+            catch (error) {
+                showError
+                (`There is a problem processing the sales order, please try again later.<br />` + error);
+            }
+
+        });
     }
 
 </script>

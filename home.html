@@ -179,52 +179,52 @@
 
 
     // Calling market information microservice
-    // $(async() => {
-    //     var stockID_url = "http://127.0.0.1:5900/market";
+    $(async() => {
+        var stockID_url = "http://127.0.0.1:5900/market";
 
-    //     try {
-    //         const response = 
-    //         await fetch(
-    //             stockID_url, {method: 'GET'}
-    //         );
+        try {
+            const response = 
+            await fetch(
+                stockID_url, {method: 'GET'}
+            );
 
-    //         const result = await response.json();
-    //         if (response.status === 200) {
+            const result = await response.json();
+            if (response.status === 200) {
 
-    //             var gainers = result.results.gainers;
-    //             counter = 1
-    //             for (gainer of gainers) {
-    //                 // Calling stock information microservice 
-    //                 id = '#g'+counter
-    //                 $(id).stocks_info(gainer['symbol'], counter);
-    //                 counter += 1
+                var gainers = result.results.gainers;
+                counter = 1
+                for (gainer of gainers) {
+                    // Calling stock information microservice 
+                    id = '#g'+counter
+                    $(id).stocks_info(gainer['symbol'], counter);
+                    counter += 1
                     
-    //             }
+                }
 
-    //             var losers = result.results.losers;
-    //             counter = 1;
-    //             for (loser of losers) {
-    //                 // Calling stock information microservice
-    //                 id = '#l' + counter.toString();
-    //                 $(id).stocks_info(loser['symbol'] , counter);
-    //                 counter += parseInt(1);
-    //             }
-    //         }
-    //         else if (response.status == 500) {
-    //             showError(result.message);
-    //         } 
-    //         else {
-    //             throw response.status;
-    //         }
-    //     }
+                var losers = result.results.losers;
+                counter = 1;
+                for (loser of losers) {
+                    // Calling stock information microservice
+                    id = '#l' + counter.toString();
+                    $(id).stocks_info(loser['symbol'] , counter);
+                    counter += parseInt(1);
+                }
+            }
+            else if (response.status == 500) {
+                showError(result.message);
+            } 
+            else {
+                throw response.status;
+            }
+        }
 
-    //     catch (error) {
-    //         showError
-    //         ('There is a problem retrieving market data, please try again later.<br />' + error);
-    //     }
+        catch (error) {
+            showError
+            ('There is a problem retrieving market data, please try again later.<br />' + error);
+        }
 
 
-    // });
+    });
 
 
     (function($) {
@@ -288,7 +288,7 @@
 
     function send_stock_id(tag) {
         var stock_id = tag.innerText;
-        sessionStorage.setItem('id',stock_id);
+        sessionStorage.setItem('stock_id',stock_id);
         window.location.href = "stock.html";
     }
 
@@ -309,7 +309,7 @@
                 const result = await response.json();
                 if (response.status === 200) {
 
-                    sessionStorage.setItem('id',stock_id);
+                    sessionStorage.setItem('stock_id',stock_id);
                     window.location.href = "stock.html";
 
                 }

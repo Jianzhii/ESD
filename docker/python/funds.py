@@ -144,7 +144,7 @@ def update_order(user_id):
             ), 200
         elif data['action'] == "SPEND":
             bal = fund.balance
-            if bal < data['amount']:
+            if bal < float(data['amount']):
                 return jsonify(
                     {
                         "code": 501,

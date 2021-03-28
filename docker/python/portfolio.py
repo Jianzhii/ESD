@@ -160,7 +160,7 @@ def update_order():
             total += stock.json()["quantity"]
 
         quantity = request.json.get('quantity', None)
-        if quantity > total:
+        if int(quantity) > total:
             return jsonify(
                 {
                     "code": 501,
