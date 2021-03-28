@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
+
+    <!-- Graph Stuff -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
+
+    <link href="dashboard.css" rel="stylesheet">	
+
+    <title>Document</title>
+
+    <style>
+        .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="home.html">Stonks Exchange</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="home.html">Home</a>
+                <a class="nav-link" href="portfolio.html">Portfolio</a>
+            </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Body -->
+    <div class='container mt-4'>
+        <h1 id='title'></h1>
+        <h3 id='name'></h3>
+
+        <p id='error'></p>
+
+        <br>
+        <p id='datetime'>Stock information as of: </p>
+
+        <div class='container'>
+
+            <!-- Row -->
+            <div class='row'>
+
+                <!-- Left Column (all quantitative information)-->
+
+                    <table class='table'>
+                        <tbody>
+                            <tr>
+                                <td  colspan=2> Last Transacted Price:</td>
+                                <td id='latest_price' colspan=2> </td>
+                            </tr>
+
+                            <tr>
+                                <td> Previous Close:</td>
+                                <td id='previousClose'></td>
+
+                                <td> Asking Price:</td>
+                                <td id='ask'> </td>
+                            </tr>
+
+                            <tr> 
+                                <td> Open:</td>
+                                <td id='open'></td>
+
+                                <td> Ask Size:</td>
+                                <td id='askSize'></td>
+                            </tr>
+
+                            <tr>
+                                <td> Volume:</td>
+                                <td id='volume'></td>
+
+                                <td> Bidding Price:</td>
+                                <td id='bid'></td>
+                            </tr>
+
+                            <tr> 
+                                <td> Average Volume:</td>
+                                <td id='averageVolume'></td>
+
+                                <td> Bid Size:</td>
+                                <td id='bidSize'></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+            </div>
+
+            <br>
+            <br>
+
+            <!-- Right Column (Graph)-->
+            <div class='row'>
+                    <button type="button" class="btn btn-info mr-3" id='1d'>1 Day</button> 
+                    <button type="button" class="btn btn-info mr-3" id='1wk'>1 Week</button>
+                    <button type="button" class="btn btn-info mr-3" id='1mo'>1 Month</button>
+                    <button type="button" class="btn btn-info mr-3" id='6mo'>6 Months</button>
+
+                    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+</body>
+
+<script>
+    // Get Stock ID for the title 
+    document.getElementsByTagName("title")[0].innerText = sessionStorage.getItem('id');    
+    document.getElementById("title").innerText = sessionStorage.getItem('id');   
+
+    // Get current date and time 
+    var currentdate = new Date(); 
+    var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + ", "  
+                + (currentdate.getHours()<10?'0':'')
+                + currentdate.getHours() + ":"  
+                + (currentdate.getMinutes()<10?'0':'')
+                + currentdate.getMinutes() + ":" 
+                + (currentdate.getSeconds()<10?'0':'') 
+                + currentdate.getSeconds();
+
+    document.getElementById("datetime").append(datetime); 
+
+    // Calling microservice for the stock information 
+    $(async() => {
+        var stockID_url = "http://127.0.0.1:5080/test";
+
+        try {
+            const response = 
+            await fetch(
+                stockID_url, {method: 'GET'}
+            );
+
+            const result = await response.json();
+            if (response.status === 200) {
+
+                var stock_info = result.results;
+
+                document.getElementById('name').append(stock_info['name']);
+                document.getElementById('latest_price').append((stock_info['historical_data']['one_day']['price'][0]).toFixed(2));
+                document.getElementById('previousClose').append(stock_info['previousClose']);
+                document.getElementById('ask').append(stock_info['ask']);
+                document.getElementById('open').append(stock_info['open']);
+                document.getElementById('askSize').append(stock_info['askSize'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                document.getElementById('volume').append(stock_info['volume'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                document.getElementById('bid').append(stock_info['bid']);
+                document.getElementById('bidSize').append(stock_info['bidSize'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                document.getElementById('averageVolume').append(stock_info['averageVolume'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));    
+
+                // convert timestamp to date
+                for (i=0; i < stock_info.historical_data.one_day.date.length; i++ ) {
+                    var date = new Date(stock_info.historical_data.one_day.date[i]/1000000);
+                    stock_info.historical_data.one_day.date[i] = '"' + (date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()) + '"';
+                }
+
+                for (i=0; i < stock_info.historical_data.one_week.date.length; i++ ) {
+                    var date = new Date(stock_info.historical_data.one_week.date[i]/1000000);
+                    stock_info.historical_data.one_week.date[i] = '"' + (date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()) + '"';
+                }
+
+                for (i=0; i < stock_info.historical_data.one_month.date.length; i++ ) {
+                    var date = new Date(stock_info.historical_data.one_month.date[i]/1000000);
+                    stock_info.historical_data.one_month.date[i] = '"' + (date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()) + '"';
+                }
+
+                for (i=0; i < stock_info.historical_data.six_month.date.length; i++ ) {
+                    var date = new Date(stock_info.historical_data.six_month.date[i]/1000000);
+                    stock_info.historical_data.six_month.date[i] = '"' + date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear() + '"';
+                }
+
+
+                document.getElementById('1d').setAttribute('onclick','graph([' + stock_info['historical_data']['one_day']['date'] + '],[' + stock_info['historical_data']['one_day']['price'] +'])');
+                document.getElementById('1wk').setAttribute('onclick','graph([' + stock_info['historical_data']['one_week']['date'] + '],[' + stock_info['historical_data']['one_week']['price'] +'])');
+                document.getElementById('1mo').setAttribute('onclick','graph([' + stock_info['historical_data']['one_month']['date'] + '],[' + stock_info['historical_data']['one_month']['price'] +'])');
+                document.getElementById('6mo').setAttribute('onclick','graph([' + stock_info['historical_data']['six_month']['date'] + '],[' + stock_info['historical_data']['six_month']['price'] +'])');
+
+                
+                document.getElementById("1d").click();
+
+            }
+            else if (response.status == 500) {
+                showError(result.message);
+            } 
+            else {
+                throw response.status;
+            }
+        }
+
+        catch (error) {
+            showError
+            (`There is a problem retrieving ${sessionStorage.getItem('id')} data, please try again later.<br />` + error);
+        }
+
+
+    });
+
+
+    function showError(message) {
+        $('#error').append("<label style='color:red; text-align:center'>"+message+"</label>");
+    };
+
+    function graph(date, price) {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: date,
+            datasets: [{
+                data: price,
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#007bff',
+                borderWidth: 4,
+                pointBackgroundColor: '#007bff'
+            }]
+            },
+            options: {
+            scales: {
+                yAxes: [{
+                ticks: {
+                    beginAtZero: false
+                }
+                }]
+            },
+            legend: {
+                display: false
+            }
+            }
+        })
+    }
+
+</script>
+
+
+</html>

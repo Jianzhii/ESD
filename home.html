@@ -61,6 +61,11 @@
         #l_change{
             color: red;
         }
+
+        .symbol:hover {
+            color: blue;
+            cursor: pointer
+        }
     </style>
 
 </head>
@@ -155,6 +160,8 @@
             </tbody>
         </table>
     </div>
+
+    <label class='symbol' onclick='send_stock_id(this)'>TSLA</label>
    
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -252,7 +259,7 @@
 
                         var row = '';
                         row += "<td>" + counter + "</td>" +
-                               "<td>" + symbol + "</td>" +
+                               "<td> <label class='symbol' onclick='send_stock_id()'>" + symbol + "</label></td>" +
                                "<td>" + stock_info['name'] + "</td>" + 
                                "<td> $" + stock_info['previousClose'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "</td>" +
                                "<td id=" + id + ">" + change + "% </td>" +
@@ -276,11 +283,16 @@
     })(jQuery);
 
     function showError(message) {
-
-        $('#error')
-            .append("<label style='color:red; text-align:center'>"+message+"</label>");
+        $('#error').append("<label style='color:red; text-align:center'>"+message+"</label>");
     }
 
+    
+
+    function send_stock_id(tag) {
+        var stock_id = tag.innerText;
+        sessionStorage.setItem('id',stock_id);
+        window.location.href = "stock.html";
+    }
 </script>
 
 </html>
