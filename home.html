@@ -87,7 +87,6 @@
         <div class="row align-items-end">
             <div class = "col-9">
                 <br>
-                <p>In the past 24hrs</p>
                
             </div>  
             <div class = "col">
@@ -246,6 +245,10 @@
                         else {
                             id = 'l_change'
                         };
+
+                        if (stock_info['name'] == null) {
+                            stock_info['name'] = symbol;
+                        }
 
                         var row = '';
                         row += "<td>" + counter + "</td>" +

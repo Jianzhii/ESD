@@ -19,12 +19,12 @@ CORS(app)
 
 # Keys to call Yahoo Finance API
 headers = {
-    'x-rapidapi-key': "b09591b193mshad22b0d68b19f4ap167b63jsnceb43796bf13",
+    'x-rapidapi-key': "c76e11c753msha38f73a10c16b1dp1443c3jsndf66c4b08501",
     'x-rapidapi-host': "apidojo-yahoo-finance-v1.p.rapidapi.com"
     }
 
 
-# second api key: c76e11c753msha38f73a10c16b1dp1443c3jsndf66c4b08501
+# second api key:  b09591b193mshad22b0d68b19f4ap167b63jsnceb43796bf13
 
 
 # To get the top 10 gainers and losers of the day
@@ -90,10 +90,10 @@ def stock_info(stock_id):
                     "open": stock_info['open'],
                     "volume": stock_info['volume'],
                     "averageVolume": stock_info['averageVolume'],
-                    "sell_price": stock_info['ask'],
-                    "sell_qty": stock_info['askSize'],
-                    "buy_price": stock_info['bid'],
-                    "buy_qty": stock_info['bidSize'],
+                    "ask": stock_info['ask'],
+                    "askSize": stock_info['askSize'],
+                    "bid": stock_info['bid'],
+                    "bidSize": stock_info['bidSize'],
                     "marketCap": stock_info['marketCap'],
                     "historical_data": {
                         "one_day": {
@@ -117,6 +117,68 @@ def stock_info(stock_id):
             }
         )
 
+    except ValueError:
+        url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-statistics"
+
+        querystring = {"symbol": stock_id}
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+
+        result = json.loads(response.text)
+
+
+        # one day = 2
+        # week = 5
+        # month = 20
+        # 6 = 125
+
+        price_url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v3/get-historical-data"
+
+        price_querystring = {"symbol":stock_id}
+
+        price_response = requests.request("GET", price_url, headers=headers, params=price_querystring)
+
+        price_result = json.loads(price_response.text)
+
+        output = {
+                "code": 200,
+                "results": {
+                    "name": result['price']['longName'],
+                    "historical_data": {
+                        "one_day": {
+                            "date": [price_result['prices'][i]['date'] for i in range(min(2, len(price_result['prices'])))][::-1],
+                            "price": [price_result['prices'][i]['close'] for i in range(min(2, len(price_result['prices'])))][::-1]
+                        },
+                        "one_week": {
+                            "date": [price_result['prices'][i]['date'] for i in range(min(5,len(price_result['prices'])))][::-1],
+                            "price": [price_result['prices'][i]['close'] for i in range(min(5,len(price_result['prices'])))][::-1]
+                        },
+                        "one_month": {
+                            "date": [price_result['prices'][i]['date'] for i in range(min(20,len(price_result['prices'])))][::-1],
+                            "price": [price_result['prices'][i]['close'] for i in range(min(20,len(price_result['prices'])))][::-1]
+                        },
+                        "six_month": {
+                            "date": [price_result['prices'][i]['date'] for i in range(min(125,len(price_result['prices'])))][::-1],
+                            "price": [price_result['prices'][i]['close'] for i in range(min(125,len(price_result['prices'])))][::-1]
+                        }
+                    }
+                }
+        }
+        
+        values = ['previousClose','open', 'volume','averageVolume','ask','askSize','bid','bidSize']
+
+        for each in values:
+            if len(result['summaryDetail'][each]) == 0:
+                output['results'][each] = "N/A"
+            else:
+                output['results'][each] = result['summaryDetail'][each]['raw']
+
+        if len(result['price']['marketCap']) == 0:
+            output['results']['marketCap'] = "N/A"
+        else:
+            output['results']['marketCap'] = result['price']['marketCap']['raw']
+
+        return jsonify(output)
 
 
     except Exception as e:
