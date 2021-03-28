@@ -1,12 +1,4 @@
-result = json.dumps(
-#     {
-#     "previousClose": tsla.info['previousClose'],
-#     "open": tsla.info['open'],
-#     "volume": tsla.info['volume'],
-#     "averageVolume": tsla.info['averageVolume'],
-#     "sell_price": tsla.info['ask'],
-#     "sell_qty": tsla.info['askSize'],
-#     "buy_price": tsla.info['bid'],
-#     "buy_qty": tsla.info['bidSize']
-# }
-)
+
+
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5080, debug=True)

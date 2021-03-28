@@ -126,12 +126,6 @@ def stock_info(stock_id):
 
         result = json.loads(response.text)
 
-
-        # one day = 2
-        # week = 5
-        # month = 20
-        # 6 = 125
-
         price_url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v3/get-historical-data"
 
         price_querystring = {"symbol":stock_id}
