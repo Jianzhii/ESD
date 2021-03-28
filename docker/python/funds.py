@@ -119,6 +119,7 @@ def update_order(user_id):
     try:
         fund = Fund.query.filter_by(
             user_id=user_id).first()
+        print(fund)
         if not fund:
             return jsonify(
                 {

@@ -3,9 +3,11 @@
 #############################################################
 
 from flask import Flask, request, jsonify
+from flask.signals import signals_available
 from flask_cors import CORS
 
-import os, sys
+import os
+import sys
 from os import environ
 
 import requests
@@ -20,8 +22,9 @@ CORS(app)
 
 
 ############# URLS to other microservices ####################
-portfolio_url = environ.get('portfolio_URL') or "http://localhost:5001/portfolio" 
-funds_url = environ.get('funds_URL') or "http://localhost:5002/funds" 
+portfolio_url = environ.get(
+    'portfolio_URL') or "http://localhost:5001/portfolio"
+funds_url = environ.get('funds_URL') or "http://localhost:5002/funds"
 # profile_url = environ.get('portfolio_URL') or "http://localhost:5003/profile"
 yahoo_friends_url = ""
 ##############################################################
@@ -38,14 +41,16 @@ def buy_stocks():
             buy_order = request.get_json()
             pricePerStock = getPrice(buy_order["stock_id"])
             qty = buy_order["quantity"]
-            customer_id = buy_order["customer_id"]
+            user_id = buy_order["user_id"]
             stock_id = buy_order["stock_id"]
             amount = pricePerStock * qty
-            customer_id = buy_order["customer_id"]
-
+            user_id = buy_order["user_id"]
+            
+            print(user_id, stock_id,
+                                pricePerStock, qty, amount)
             # check yahoo friends??
 
-            result = processBuy(customer_id, stock_id,
+            result = processBuy(user_id, stock_id,
                                 pricePerStock, qty, amount)
 
             if result != True:
@@ -56,7 +61,7 @@ def buy_stocks():
                         "code": 200,
                         "message": "Buy success",
                         "details": {
-                            "customer_id": customer_id,
+                            "user_id": user_id,
                             "stock_id": stock_id,
                             "pricePerStock": pricePerStock,
                             "quantity": qty,
@@ -86,10 +91,10 @@ def buy_stocks():
     }), 400
 
 
-def processBuy(customer_id, stock_id, pricePerStock, qty, amount):
+def processBuy(user_id, stock_id, pricePerStock, qty, amount):
 
     print('\n-----Invoking funds microservice-----')
-    print(customer_id, amount)
+    print(user_id, amount)
 
     json = {
         "action": "SPEND",
@@ -97,9 +102,11 @@ def processBuy(customer_id, stock_id, pricePerStock, qty, amount):
     }
 
     # Checking funds availability
-    avail = invoke_http(funds_url + customer_id, method="PUT", json=json)
+    avail = invoke_http(funds_url + "/" + user_id, method="PUT", json=json)
     code = avail["code"]
-    message = json.dumps(avail)
+    message = "buy"
+    print (code, message)
+   
 
     if code not in range(200, 300):
         # Inform the error microservice
@@ -117,7 +124,7 @@ def processBuy(customer_id, stock_id, pricePerStock, qty, amount):
         print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
             code), avail)
 
-        return avail
+        return message
     else:
 
         # 4. Record new order
@@ -136,9 +143,8 @@ def processBuy(customer_id, stock_id, pricePerStock, qty, amount):
 
         print('\n-----Invoking portfolio microservice-----')
         json = {
-            "customer_id": customer_id,
+            "user_id": user_id,
             "stock_id": stock_id,
-            "price": pricePerStock,
             "quantity": qty
         }
 
@@ -165,14 +171,14 @@ def sell_stocks():
             sell_order = request.get_json()
             pricePerStock = getPrice(sell_order["stock_id"])
             qty = sell_order["quantity"]
-            customer_id = sell_order["customer_id"]
+            user_id = sell_order["user_id"]
             stock_id = sell_order["stock_id"]
             amount = pricePerStock * qty
-            customer_id = sell_order["customer_id"]
+            user_id = sell_order["user_id"]
 
             # check yahoo friends??
 
-            result = processSell(customer_id, stock_id, qty, amount)
+            result = processSell(user_id, stock_id, qty, amount)
 
             if result["code"] not in range(200, 300):
                 return result
@@ -188,7 +194,7 @@ def sell_stocks():
                         "code": 201,
                         "message": "Sell success",
                         "details": {
-                            "customer_id": customer_id,
+                            "user_id": user_id,
                             "stock_id": stock_id,
                             "profit": profit,
                             "priceperstock": pricePerStock
@@ -218,21 +224,52 @@ def sell_stocks():
     }), 400
 
 
-def processSell(customer_id, stock_id, qty, amount):
+def processSell(user_id, stock_id, qty, amount):
     print('\n-----Invoking portfolio microservice-----')
 
     json = {
-        "customer_id": customer_id,
+        "user_id": user_id,
         "stock_id": stock_id,
         "quantity": qty
     }
 
     # Checking on stocks availability in portfolio and update accordingly
-    stocks = invoke_http(portfolio_url, method="PUT", json=json)
+    avail = invoke_http(portfolio_url, method="PUT", json=json)
+    code = avail["code"]
+    message = "sell"
 
-    if stocks['code'] not in range(200, 300):
-        return stocks
+    if code not in range(200, 300):
+        # Inform the error microservice
+        #print('\n\n-----Invoking error microservice as order fails-----')
+        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+
+        # invoke_http(error_URL, method="POST", json=order_result)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
+                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
+        # make message persistent within the matching queues until it is received by some receiver
+        # (the matching queues have to exist and be durable and bound to the exchange)
+
+        # - reply from the invocation is not used;
+        # continue even if this invocation fails
+        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), avail)
+
+        return avail
     else:
+         # 4. Record new order
+        # record the activity log anyway
+        # print('\n\n-----Invoking activity_log microservice-----')
+        print(
+            '\n\n-----Publishing the (order info) message with routing_key=order.info-----')
+
+        # invoke_http(activity_log_URL, method="POST", json=order_result)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info",
+                                         body=message)
+
+        print("\nOrder published to RabbitMQ Exchange.\n")
+        # - reply from the invocation is not used;
+        # continue even if this invocation fails
+
         print('\n-----Invoking funds microservice-----')
         json = {
             "action": "LOAD",
@@ -240,9 +277,8 @@ def processSell(customer_id, stock_id, qty, amount):
         }
 
         # Updating funds after successful sales
-        invoke_http(funds_url + customer_id, method="PUT", json=json)
-        return stocks
-
+        invoke_http(funds_url + "/" + user_id, method="PUT", json=json)
+        return avail
 
 def getPrice(stock_id):
     return 30.00
