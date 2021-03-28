@@ -38,9 +38,8 @@ def auth():
         userid = idinfo['sub']
         name = idinfo['name']
         email = idinfo['email']
-        session['userID'] = userid
         check(userid, name, email)
-        return redirect('home.html', code=302)
+        return {'userid':userid, 'name':name}
 
     except ValueError:
         # Invalid token
@@ -55,10 +54,11 @@ def check(userid, name, email):
         "name": name,
         "email": email
     }
-    avail = invoke_http(profile_url + userid, method="POST", json=json)
-    print(avail)
+    avail = invoke_http(profile_url +"/"+ userid, method="POST", json=json)
+    print(type(avail['code']))
     if avail['code'] == 404:
-        pass
+        print("hi")
+        return userid
     elif avail['code'] not in range(200, 300):
         return avail
     else:
@@ -72,7 +72,7 @@ def check(userid, name, email):
         if avail['code'] not in range(200, 300):
             return avail
         else:
-            return True
+            return userid
 
 
 if __name__ == '__main__':
