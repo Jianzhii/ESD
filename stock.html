@@ -154,7 +154,7 @@
 
     // Calling microservice for the stock information 
     $(async() => {
-        var stockID_url = "http://127.0.0.1:5080/test";
+        var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('id');
 
         try {
             const response = 

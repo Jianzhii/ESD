@@ -173,7 +173,7 @@ def stock_info(stock_id):
             else:
                 output['results'][each] = result['summaryDetail'][each]['raw']
 
-        if len(result['price']['marketCap']) == 0:S
+        if len(result['price']['marketCap']) == 0:
             output['results']['marketCap'] = "N/A"
         else:
             output['results']['marketCap'] = result['price']['marketCap']['raw']
