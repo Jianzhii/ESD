@@ -37,5 +37,8 @@ CREATE TABLE IF NOT EXISTS `funds` (
 --
 -- Dumping data for table `portfolio`
 --
+
+USE `funds`;
+
 INSERT INTO `funds` (`user_id`, `balance`, `spent`)
 VALUES ('Apple TAN', '500.00', '0.00');

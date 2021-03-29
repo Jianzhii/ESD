@@ -155,7 +155,6 @@ def update_order():
 
         # update status
         total = 0
-
         for stock in portfolio:
             total += stock.json()["quantity"]
 
@@ -177,7 +176,8 @@ def update_order():
             sold = []
             for stock in portfolio:
                 qty = stock.json()["quantity"]
-                if quantity > qty:
+                if int(quantity) >= qty:
+                    quantity = int(quantity)
                     quantity -= qty
                     sold.append(
                         {"quantity": qty, "price": stock.json()["price"]})
@@ -198,7 +198,7 @@ def update_order():
                     sold.append(
                         {"quantity": quantity, "price": stock.json()["price"]})
                     try:
-                        stock.quantity -= quantity
+                        stock.quantity -= int(quantity)
                         db.session.commit()
                     except:
                         return jsonify(

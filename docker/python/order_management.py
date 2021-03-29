@@ -183,8 +183,8 @@ def sell_stocks():
             else:
                 cost = 0
                 for stock in result["data"]:
-                    cost += stock["price"] * stock["quantity"]
-
+                    cost += float(stock["price"]) * float(stock["quantity"])
+                    
                 profit = amount - cost
 
                 return jsonify(
