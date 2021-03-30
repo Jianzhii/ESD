@@ -7,7 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
@@ -24,7 +24,7 @@
     <script src="dashboard.js"></script>
 
     <script>
-        sessionStorage.setItem('stock_id','GME');
+        // sessionStorage.setItem('stock_id','GME');
     </script>
 
     <title>Document</title>
@@ -229,8 +229,8 @@
 
     // Calling microservice for the stock information 
     $(async() => {
-        // var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('id');
-        var stockID_url = "http://127.0.0.1:5080/test";
+        var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('stock_id');
+        // var stockID_url = "http://127.0.0.1:5080/test";
 
         try {
             const response = 
@@ -387,7 +387,7 @@
                 );
 
                 const result = await response.json();
-                if (response.status === 200) {
+                if (response.status === 201) {
 
                     alert('Sales order has been submitted for matching.');
                     $('#sellClose').click();

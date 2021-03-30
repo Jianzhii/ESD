@@ -211,12 +211,12 @@ def update_order():
                             }
                         ), 501
                     print(sold)
-                    return jsonify(
-                        {
-                            "code": 200,
-                            "data": sold
-                        }
-                    ), 200
+                return jsonify(
+                    {
+                        "code": 200,
+                        "data": sold
+                    }
+                ), 200
 
     except Exception as e:
         return jsonify(
