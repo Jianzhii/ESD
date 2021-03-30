@@ -11,7 +11,7 @@ services:
     build:
       context: ./
       dockerfile: profile.Dockerfile
-    image: asher935/profile:esd
+    image: jzshum/profile:esd
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/profile
@@ -26,7 +26,7 @@ services:
     build:
       context: ./
       dockerfile: funds.Dockerfile
-    image: asher935/funds:esd
+    image: jzshum/funds:esd
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/funds
@@ -41,7 +41,7 @@ services:
     build:
       context: ./
       dockerfile: portfolio.Dockerfile
-    image: asher935/portfolio:esd
+    image: jzshum/portfolio:esd
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/portfolio
@@ -56,7 +56,7 @@ services:
     build:
       context: ./
       dockerfile: auth_user.Dockerfile
-    image: asher935/auth_user:esd
+    image: jzshum/auth_user:esd
     restart: always
     depends_on:
       - funds
@@ -75,7 +75,7 @@ services:
     build:
       context: ./
       dockerfile: yahoo_friend.Dockerfile
-    image: asher935/yahoo_friend:esd
+    image: jzshum/yahoo_friend:esd
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
@@ -102,7 +102,7 @@ services:
     build:
       context: ./
       dockerfile: activity_log.Dockerfile
-    image: asher935/activity_log:esd
+    image: jzshum/activity_log:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -118,7 +118,7 @@ services:
     build:
       context: ./
       dockerfile: error.Dockerfile
-    image: asher935/error:esd
+    image: jzshum/error:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -134,7 +134,7 @@ services:
     build:
       context: ./
       dockerfile: order_management.Dockerfile
-    image: asher935/order_management:esd
+    image: jzshum/order_management:esd
     restart: always
     depends_on:
       - funds
