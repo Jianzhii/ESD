@@ -39,9 +39,6 @@ CREATE TABLE IF NOT EXISTS `portfolio` (
 --
 -- Dumping data for table `portfolio`
 --
-
-USE `portfolio`;
-
 INSERT INTO `portfolio` (
     `order_id`,
     `user_id`,

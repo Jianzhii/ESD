@@ -1,4 +1,4 @@
-tsla = yf.Ticker('')
-history = tsla.history(period='1d')
 
-print(tsla.info)
+
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5080, debug=True)
