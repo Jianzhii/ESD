@@ -335,17 +335,14 @@
                 );
 
                 const result = await response.json();
-                if (response.status === 200) {
+                if (response.status >= 200 && response.status < 300) {
 
                     alert('Purchase order has been submitted for matching.');
                     $('#buyClose').click();
 
                 }
-                else if (response.status == 500) {
-                    showError(result.message);
-                } 
                 else {
-                    throw response.status;
+                    alert(result.message);
                 }
             }
 
@@ -387,17 +384,14 @@
                 );
 
                 const result = await response.json();
-                if (response.status === 201) {
+                if (response.status >= 200 && response.status < 300) {
 
                     alert('Sales order has been submitted for matching.');
                     $('#sellClose').click();
 
                 }
-                else if (response.status == 500) {
-                    showError(result.message);
-                } 
                 else {
-                    throw response.status;
+                    alert(result.message);
                 }
             }
 

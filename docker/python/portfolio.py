@@ -129,6 +129,7 @@ def create_order():
     return jsonify(
         {
             "code": 201,
+            "message": 'Purchase Successful',
             "data": portfolio.json()
         }
     ), 201
@@ -157,9 +158,11 @@ def update_order():
         total = 0
         for stock in portfolio:
             total += stock.json()["quantity"]
+        print(f'--- Currently holding onto {total} {stock_id} stocks---')
 
         quantity = request.json.get('quantity', None)
-        if int(quantity) > total:
+        quantity = int(quantity)
+        if quantity > total:
             return jsonify(
                 {
                     "code": 501,
@@ -176,8 +179,7 @@ def update_order():
             sold = []
             for stock in portfolio:
                 qty = stock.json()["quantity"]
-                if int(quantity) >= qty:
-                    quantity = int(quantity)
+                if quantity >= qty:
                     quantity -= qty
                     sold.append(
                         {"quantity": qty, "price": stock.json()["price"]})
@@ -194,11 +196,14 @@ def update_order():
                                 "message": "An error occurred deleting the stock."
                             }
                         ), 500
+                    if quantity == 0:
+                        break
+
                 else:
                     sold.append(
                         {"quantity": quantity, "price": stock.json()["price"]})
                     try:
-                        stock.quantity -= int(quantity)
+                        stock.quantity -= quantity
                         db.session.commit()
                     except:
                         return jsonify(
@@ -210,13 +215,15 @@ def update_order():
                                 "message": "An error occurred editing the stock."
                             }
                         ), 501
-                    print(sold)
-                return jsonify(
-                    {
-                        "code": 200,
-                        "data": sold
-                    }
-                ), 200
+                    break 
+            print(sold)
+            return jsonify(
+                {
+                    "code": 200,
+                    "message": "Sales Successful",
+                    "data": sold
+                }
+            ), 200
 
     except Exception as e:
         return jsonify(

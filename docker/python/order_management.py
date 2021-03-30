@@ -45,14 +45,12 @@ def buy_stocks():
             stock_id = buy_order["stock_id"]
             amount = float(pricePerStock) * float(qty)
             
-            print(user_id, stock_id,
-                                pricePerStock, qty, amount)
+            print(user_id, stock_id, pricePerStock, qty, amount)
 
-            result = processBuy(user_id, stock_id,
-                                pricePerStock, qty, amount)
+            result = processBuy(user_id, stock_id, pricePerStock, qty, amount)
 
             if result != True:
-                return result
+                return jsonify(result), 500
             else:
                 return jsonify(
                     {
@@ -102,7 +100,7 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
     # Checking funds availability
     avail = invoke_http(funds_url + "/" + user_id, method="PUT", json=json)
     code = avail["code"]
-    message = "buy"
+    message = avail['message']
     print (code, message)
    
 
@@ -122,7 +120,7 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
             code), avail)
 
-        return message
+        return avail
     else:
 
         # 4. Record new order
@@ -154,11 +152,6 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         else:
             return True
 
-
-def getPrice(stock_id):
-    return 20.00
-
-
 @app.route('/order/sell', methods=['PUT'])
 def sell_stocks():
 
@@ -173,13 +166,12 @@ def sell_stocks():
             user_id = sell_order["user_id"]
             stock_id = sell_order["stock_id"]
             amount = float(pricePerStock) * float(qty)
-
-            # check yahoo friends??
-
+            
             result = processSell(user_id, stock_id, qty, amount)
 
             if result["code"] not in range(200, 300):
-                return result
+                return jsonify(result),501
+
             else:
                 cost = 0
                 for stock in result["data"]:
@@ -234,7 +226,7 @@ def processSell(user_id, stock_id, qty, amount):
     # Checking on stocks availability in portfolio and update accordingly
     avail = invoke_http(portfolio_url, method="PUT", json=json)
     code = avail["code"]
-    message = "sell"
+    message = avail['message']
 
     if code not in range(200, 300):
         # Inform the error microservice
@@ -277,22 +269,6 @@ def processSell(user_id, stock_id, qty, amount):
         # Updating funds after successful sales
         invoke_http(funds_url + "/" + user_id, method="PUT", json=json)
         return avail
-
-def getPrice(stock_id):
-    return 30.00
-
-# Function to update user portfolio after successful purchase of stocks
-# Order type will be buy or sell. Buying only involves update after successful purchase. Selling involves checking and updating only if sell is possible
-
-
-def update_portfolio(order, order_type):
-    pass
-
-# Function to call Yahoo's Friend??
-
-
-def yahoo_friend():
-    pass
 
 
 if __name__ == '__main__':
