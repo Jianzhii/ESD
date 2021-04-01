@@ -2,9 +2,10 @@
 # Microservice to manage all buy/sell orders from customers #
 #############################################################
 
-from flask import Flask, request, session, redirect
+from flask import Flask, request, session, redirect,jsonify
 from flask_cors import CORS
-import os, sys
+import os
+import sys
 from os import environ
 from invokes import invoke_http
 
@@ -17,8 +18,8 @@ app.secret_key = "SrocErkkgz0zd15PykMxuSUwtzidl2Yd"
 CORS(app)
 
 ############# URLS to other microservices ####################
-#portfolio_url = environ.get('portfolio_URL') or "http://localhost:5001/portfolio" 
-funds_url = environ.get('funds_URL') or "http://localhost:5002/funds" 
+#portfolio_url = environ.get('portfolio_URL') or "http://localhost:5001/portfolio"
+funds_url = environ.get('funds_URL') or "http://localhost:5002/funds"
 profile_url = environ.get('portfolio_URL') or "http://localhost:5003/profile"
 yahoo_friends_url = ""
 ##############################################################
@@ -39,7 +40,7 @@ def auth():
         name = idinfo['name']
         email = idinfo['email']
         check(userid, name, email)
-        return {'userid':userid, 'name':name}
+        return jsonify({'userid': userid, 'name': name}),200
 
     except ValueError:
         # Invalid token
@@ -54,7 +55,7 @@ def check(userid, name, email):
         "name": name,
         "email": email
     }
-    avail = invoke_http(profile_url +"/"+ userid, method="POST", json=json)
+    avail = invoke_http(profile_url + "/" + userid, method="POST", json=json)
     print(type(avail['code']))
     if avail['code'] == 404:
         print("hi")

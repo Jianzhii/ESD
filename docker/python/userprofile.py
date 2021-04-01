@@ -16,7 +16,7 @@ fundsURL = "http://127.0.0.1:5002/funds"
 profileURL = "http://127.0.0.1:5003/profile"
 errorURL = "http://127.0.0.1:5005/error"
 
-@app.route("/userprofile", methods=['POST'])
+@app.route("/userprofile")
 def userprofile():
     # Simple check of input format and data of the request are JSON
 
@@ -46,8 +46,6 @@ def processPortfolio(userid):
 
     # retrieve value from user_id key
     name = userid["user_id"]
-    name = name.replace(" ", "%20")
-    print(name)
 
     profile_result = invoke_http(profileURL + "/" + name, method="GET")
     print('profile result: ', profile_result)
