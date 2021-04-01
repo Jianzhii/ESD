@@ -17,54 +17,43 @@ portfolioURL = environ.get('portfolio_URL') or "http://127.0.0.1:5001/portfolio"
 fundsURL = environ.get('funds_URL') or "http://127.0.0.1:5002/funds"
 profileURL = environ.get('profile_URL') or "http://127.0.0.1:5003/profile"
 
-@app.route("/userprofile", methods=['POST'])
-def userprofile():
-    # Simple check of input format and data of the request are JSON
+@app.route("/userprofile/<string:user_id>")
+def userprofile(user_id):
+ 
+    try:
+        # information = request.get_json()
+        print("\nReceived information:", user_id)
+        # print(type(information))
+        result = processPortfolio(user_id)
 
-    if request.is_json:
-        try:
-            information = request.get_json()
-            print("\nReceived information in JSON:", information)
-            # print(type(information))
-            result = processPortfolio(information)
-
-            if result['code'] in range(200,300):
-                return jsonify({
-                    "code": 200,
-                    "results": result
-                }),200 
-            else: 
-                return jsonify(result), 500
-
-        except Exception as e:
-                        # Unexpected error in code
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ex_str = str(e) + " at " + str(exc_type) + ": " + \
-                fname + ": line " + str(exc_tb.tb_lineno)
-            print(ex_str)
-
+        if result['code'] in range(200,300):
             return jsonify({
-                "code": 500,
-                "message": "userprofile.py internal error: " + ex_str
-            }), 500
-        
-    else:        
+                "code": 200,
+                "results": result
+            }),200 
+        else: 
+            return jsonify(result), 500
+
+    except Exception as e:
+                    # Unexpected error in code
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        ex_str = str(e) + " at " + str(exc_type) + ": " + \
+            fname + ": line " + str(exc_tb.tb_lineno)
+        print(ex_str)
+
         return jsonify({
-                "code": 400,
-                "message": "Invalid JSON input: " + str(request.get_data())
-        }), 400
+            "code": 500,
+            "message": "userprofile.py internal error: " + ex_str
+        }), 500
+
 
 def processPortfolio(userid):
     print('\n----Invoking profile microservice----')
 
-    # retrieve value from user_id key
-    name = userid["user_id"]
-
-    profile_result = invoke_http(profileURL + "/" + name, method="GET")
+    profile_result = invoke_http(profileURL + "/" + userid, method="GET")
     print(profile_result)
     print(type(profile_result))
-
 
     # Sending error to error.py if there are issues with retriving profile information 
     if profile_result['code'] not in range(200, 300):
@@ -87,7 +76,7 @@ def processPortfolio(userid):
     print('profile result: ', profile_result)
 
     print('\n----Invoking portfolio microservice----')
-    portfolio_result = invoke_http(portfolioURL + "/" + name, method="GET")
+    portfolio_result = invoke_http(portfolioURL + "/" + userid, method="GET")
 
     # Sending error to error.py if there are issues with retriving portfolio information, below 500 as it will return 404 if there are no portfolio
     if portfolio_result['code'] not in range(200, 500):
@@ -110,7 +99,7 @@ def processPortfolio(userid):
     print('portfolio result: ', portfolio_result)
 
     print('\n----Invoking funds microservice----')
-    funds_result = invoke_http(fundsURL + "/" + name, method="GET")
+    funds_result = invoke_http(fundsURL + "/" + userid, method="GET")
     # Sending error to error.py if there are issues with retriving funds information 
     if funds_result['code'] not in range(200, 300):
         # Inform the error microservice

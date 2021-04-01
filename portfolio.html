@@ -146,16 +146,14 @@
       <script>
         
         $(async() => {     
-            var body = {"user_id":"Apple TAN"};
-            var userprofileURL = "http://localhost:5008/userprofile"; 
+            var user_id = 'Apple Tan'
+            var userprofileURL = "http://localhost:5008/userprofile/" + user_id; 
 
             try {
                 const response =
                 await fetch(
                     userprofileURL, {
-                        method: 'POST',
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify(body)
+                        method: 'GET'
                     }
                 );
 
