@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
 import os, sys
 from os import environ
 
@@ -142,6 +141,6 @@ def processPortfolio(userid):
     }
     
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an order...")
+    print("This is flask " + os.path.basename(__file__) + " for retrieving customer's information...")
     app.run(host="0.0.0.0", port=5008, debug=True)
         
