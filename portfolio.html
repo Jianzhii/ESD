@@ -15,11 +15,29 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script> -->
+
     <style>
         /* YOUR CSS CODE GOES HERE */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
 
         #down{
             color: red;
@@ -45,7 +63,34 @@
         #warning{
             justify-content: center;
         }
+
+        #g_change {
+            color: green;
+        }
+
+        #l_change{
+            color: red;
+        }
+
+        .symbol:hover {
+            color: blue;
+            cursor: pointer ;
+
+        }
+
+        h1 {
+            text-align: center;
+            margin: 15px ;
+            font-weight: bold ;
+        }
+
+        h2 {
+            text-align: center ;
+            font-weight: bold ;
+        }
+        
     </style>
+
     <link href="dashboard.css" rel="stylesheet">	
 
 </head>
@@ -53,90 +98,113 @@
 <body>
     <!-- YOUR CODE GOES HERE -->
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="home.html">Stonks Exchange</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="home.html">Home</a>
-                <a class="nav-link" href="portfolio.html">Portfolio</a>
-            </div>
-            </div>
+        <div class="container" id="main">
+            <h1 id="welcome">Welcome to Stonks Exchange, </h1>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="card bg-light mb-3 h-100">
+                            <div class="card-header" style='font-size:26px ; text-align: center;'>
+                                <i class="fas fa-user-circle" style='font-size:36px'></i>
+                                Personal Information</i>
+                            </div>
+                            <div class="card-body">
+                              <p class="card-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="card bg-light mb-3 h-100">
+                            <div class="card-header" style='font-size:26px ; text-align: center'>
+                                <i class='fas fa-piggy-bank' style='font-size:36px'></i>Your Wallet
+                            </div>
+                            <div class="card-body">
+                              <p class="card-text" id="left">
+                                    Amount Left: $
+                              </p>
+                              <p class="card-text" id="spent">
+                                    Amount Spent: $
+                              </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="container">
+                <h2 style='text-align: center ; margin: 20px'>Your Stocks</h2>
+                <table class="table" id="stocks">
+                    <thead class="thead-light">
+                      <tr>
+                        <th scope="col">S/N</th>
+                        <th scope="col">Name of Stock</th>
+                        <th scope="col">Price of Stock</th>
+                        <th scope="col">Quantity of Stock</th>
+                      </tr>
+                  </table>
         </div>
-    </nav>
-    <div class="container-fluid">
-        <div class="row align-items-end">
-			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-				  <h1 class="h2">Dashboard</h1>
-				  <div class="btn-toolbar mb-2 mb-md-0">
-					<div class="btn-group me-2">
-					  <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-					  <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-					</div>
-					<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-					  <span data-feather="calendar"></span>
-					  This week
-					</button>
-				  </div>
-				</div>
-			<canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
         </div>
-    </div>  
-    <br>
+      
 
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Change</th>
-            <th scope="col">Market Cap</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td><button type="button" class="btn btn-danger">GME</button> Gamestock Corp</td>
-            <td>$195.00</td>
-            <td>-11.82%</td>
-            <td>13.68B USD</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td><button type="button" class="btn btn-secondary">APPL</button> Apple Inc</td>
-            <td>$126.22</td>
-            <td>+1.81%</td>
-            <td>2.13T USD</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td><button type="button" class="btn btn-success">NVDA</button> NVIDIA Corporation</td>
-            <td>$536.17</td>
-            <td>+1.61%</td>
-            <td>332.63B USD</td>
-          </tr>
-        </tbody>
-      </table>
+      <script>
+        
+        $(async() => {     
+            var body = {"user_id":"Apple TAN"};
+            var userprofileURL = "http://localhost:5008/userprofile"; 
+
+            try {
+                const response =
+                await fetch(
+                    userprofileURL, {
+                        method: 'POST',
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(body)
+                    }
+                );
+
+                const result = await response.json();
+                console.log(result)
+                if (response.status === 200) {
+                    var name = result.results.data.profile_result.profile.name
+                    console.log(name)
+                    $('#welcome').append(name)
+
+                    var balance = result.results.data.funds_result.fund.balance
+                    var spent = result.results.data.funds_result.fund.spent
+                    $('#left').append(balance)
+                    $('#spent').append(spent)
+
+                    var rows = ""
+                    var stocks = result.results.data.portfolio_result.stocks
+
+                    for (const stock of stocks) {
+                        eachRow = "<td>" + stock.stock_id + "</td>" +
+                                  "<td>" + stock.price + "</td>" +
+                                  "<td>" + stock.quantity + "</td" ;
+                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>"
+                    }
+
+                    $('#stocks').append(rows) ;
+                }
+
+                else if (response.status == 404) {
+                    showError(result.message) ;
+                } else {
+                    throw response.status ;
+                }
+                
+            } catch (error) {
+                showError
+                ('There is a problem retrieving your portfolio, please try again later.<br />' + error); 
+            }
+        });
+
+          function showError(message) {
+            $('#error').append("<label style='color:red; text-align:center'>"+message+"</label>");
+          };
+          
+      </script>
 
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
-	// where the chart values are stored
-	<script src="dashboard.js"></script>
 </body>
 
 </html>
