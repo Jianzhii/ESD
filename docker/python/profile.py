@@ -72,7 +72,7 @@ def find_by_user_id(user_id):
             "data": {
                 "user_id": user_id
             },
-            "message": "No portfolio found."
+            "message": "No profile found."
         }
     ), 404
 

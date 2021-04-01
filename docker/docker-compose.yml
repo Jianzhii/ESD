@@ -4,6 +4,20 @@ volumes:
   rabbitmq_data:
 
 services:
+  ####################################
+  # RabbitMQ: The messaging broker
+  ####################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+
   ###################################
   # Profile: The Profile microservice
   ###################################
@@ -82,19 +96,6 @@ services:
     ports:
       - "5900:5900"
 
-  ####################################
-  # RabbitMQ: The messaging broker
-  ####################################
-  rabbitmq:
-    image: rabbitmq:3-management
-    hostname: esd-rabbit
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
   #################################################
   # Activity Log: The Activity Log microservice
   #################################################
@@ -150,3 +151,28 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5100:5100"
+
+  ###############################################
+  # User Profile: The User Profile microservice
+  ###############################################
+  user_profile:
+    build:
+      context: ./
+      dockerfile: userprofile.Dockerfile
+    image: jzshum/userprofile:esd
+    restart: always
+    depends_on:
+      - funds
+      - portfolio
+      - profile
+      - error
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      portfolio_URL: http://portfolio:5001/portfolio
+      funds_URL: http://funds:5002/funds
+      profile_URL: http://profile:5003/profile
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5008:5008"

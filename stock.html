@@ -24,7 +24,8 @@
     <script src="dashboard.js"></script>
 
     <script>
-        // sessionStorage.setItem('stock_id','GME');
+        // sessionStorage.clear()
+        // sessionStorage.setItem('stock_id','TSLA');
     </script>
 
     <title>Document</title>
@@ -207,6 +208,7 @@
 </body>
 
 <script>
+
     // Get Stock ID for the title 
     document.getElementsByTagName("title")[0].innerText = sessionStorage.getItem('stock_id');    
     document.getElementById('buyTitle').innerText = "Buying " + sessionStorage.getItem('stock_id');
@@ -243,6 +245,17 @@
 
                 var stock_info = result.results;
 
+                // Set buying and selling price as session variable and setting to default value for buy/sell modal
+                sessionStorage.setItem('buying_price',stock_info['ask']);
+                sessionStorage.setItem('selling_price',stock_info['bid']);
+
+                // document.getElementById('buyPrice').setAttribute('placeholder',sessionStorage.getItem('buying_price'));
+                // document.getElementById('sellPrice').setAttribute('placeholder',sessionStorage.getItem('selling_price'));
+                document.getElementById('buyPrice').defaultValue = Math.max(stock_info['ask'], stock_info['open']);
+                document.getElementById('sellPrice').defaultValue = Math.min(stock_info['bid'], stock_info['open']);
+
+
+                // Inputting all stock information into webpage
                 document.getElementById('name').append(stock_info['name']);
                 document.getElementById('latest_price').append((stock_info['historical_data']['one_day']['price'][0]).toFixed(2));
                 document.getElementById('previousClose').append(stock_info['previousClose']);
