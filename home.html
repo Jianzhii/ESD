@@ -180,7 +180,7 @@
 
     // Calling market information microservice
     $(async() => {
-        var stockID_url = "http://127.0.0.1:5900/market";
+        var stockID_url = "http://127.0.0.1:8000/market";
 
         try {
             const response = 
@@ -231,8 +231,12 @@
         $.fn.stocks_info = function(symbol, counter) {
             $(async() => {
                 
-                var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
+                // API Gateway
+                var stockInfo_url = "http://127.0.0.1:8000/stock/" + symbol;
 
+                // Non-API Gateway
+                // var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
+                
                 try {
                     const info_response = 
                     await fetch(
@@ -255,6 +259,9 @@
                         if (stock_info['name'] == null) {
                             stock_info['name'] = symbol;
                         }
+                        if (stock_info['marketCap'] == null) {
+                            stock_info['marketCap'] = 'N/A'
+                        } 
 
                         var row = '';
                         row += "<td>" + counter + "</td>" +
@@ -270,7 +277,7 @@
                     } 
                     else {
                         throw info_response.status;
-            }
+                    }
                 }   
 
                 catch (error) {
@@ -298,7 +305,7 @@
         
         $(async() => {
             var stock_id = document.getElementById('search').value;
-            var stockID_url = "http://127.0.0.1:5900/stock/" + stock_id;
+            var stockID_url = "http://127.0.0.1:8000/stock/" + stock_id;
 
             try {
                 const response = 

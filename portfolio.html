@@ -147,7 +147,12 @@
         
         $(async() => {     
             var user_id = 'Apple Tan'
-            var userprofileURL = "http://localhost:5008/userprofile/" + user_id; 
+
+            // API Gateway
+            var userprofileURL = "http://localhost:8000/userprofile/" + user_id; 
+
+            // Non-API Gateway
+            // var userprofileURL = "http://localhost:5008/userprofile/" + user_id; 
 
             try {
                 const response =
