@@ -25,7 +25,7 @@
 
     <script>
         // sessionStorage.clear()
-        // sessionStorage.setItem('stock_id','TSLA');
+        sessionStorage.setItem('stock_id','TSLA');
     </script>
 
     <title>Document</title>
@@ -231,8 +231,12 @@
 
     // Calling microservice for the stock information 
     $(async() => {
-        var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('stock_id');
-        // var stockID_url = "http://127.0.0.1:5080/test";
+
+        // API Gateway
+        var stockID_url = "http://127.0.0.1:8000/stock/" + sessionStorage.getItem('stock_id');
+
+        // Non-API Gateway
+        // var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('stock_id');
 
         try {
             const response = 
@@ -322,7 +326,7 @@
     // Calling Microservice to buy stocks
     function buyStocks(){
         $(async() => {
-            
+
             var user_id = 'Apple TAN';
             var stock_id = sessionStorage.getItem('stock_id');
             var buyPrice = document.getElementById('buyPrice').value;
@@ -335,14 +339,18 @@
                 "price": buyPrice
             };
 
-            var stockID_url = "http://127.0.0.1:5100/order/buy";
+            // API Gateway
+            var stockID_url = "http://127.0.0.1:8000/order/buy" ;
+
+            // Non-API Gateway
+            // var stockID_url = "http://127.0.0.1:5100/order/buy" ;
 
             try {
                 const response = 
                 await fetch(
                     stockID_url, { 
                         method: 'PUT',
-                        headers: {"Content-Type": "application/json"},
+                        headers:{'Content-Type':'application/json'},
                         body: JSON.stringify(buy_details) 
                     }
                 );
@@ -384,16 +392,20 @@
                 "price": sellPrice
             };
 
-            var stockID_url = "http://127.0.0.1:5100/order/sell";
+            // API Gateway
+            var stockID_url = "http://127.0.0.1:8000/order/sell";
+
+            // Non-API Gateway
+            // var stockID_url = "http://127.0.0.1:5100/order/sell";
 
             try {
                 const response = 
                 await fetch(
                     stockID_url, { 
                         method: 'PUT',
-                        headers: {"Content-Type": "application/json"},
+                        headers: {'Content-Type':'application/json'},
                         body: JSON.stringify(sell_details) 
-                    }
+                    }, 
                 );
 
                 const result = await response.json();
