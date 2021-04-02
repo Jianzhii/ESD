@@ -117,7 +117,7 @@ def stock_info(stock_id):
             }
         )
 
-    except ValueError:
+    except ValueError or KeyError or NameError:
         url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-statistics"
 
         querystring = {"symbol": stock_id}
