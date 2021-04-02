@@ -54,9 +54,9 @@ def processPortfolio(userid):
     profile_result = invoke_http(profileURL + "/" + userid, method="GET")
     print(profile_result)
     print(type(profile_result))
-
+    code = profile_result['code']
     # Sending error to error.py if there are issues with retriving profile information 
-    if profile_result['code'] not in range(200, 300):
+    if code not in range(200, 300):
         # Inform the error microservice
         #print('\n\n-----Invoking error microservice as order fails-----')
         print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
