@@ -87,6 +87,7 @@
         h2 {
             text-align: center ;
             font-weight: bold ;
+            margin: 20px ;
         }
         
     </style>
@@ -107,6 +108,8 @@
                                 Personal Information</i>
                             </div>
                             <div class="card-body">
+                                <p class="container" id="userid">User Id: </p>
+                                <p class="container" id="email">Email Address: </p>
                               <p class="card-text"></p>
                             </div>
                         </div>
@@ -129,14 +132,14 @@
                 </div>
 
             <div class="container">
-                <h2 style='text-align: center ; margin: 20px'>Your Stocks</h2>
+                <h2>Your Stonks</h2>
                 <table class="table" id="stocks">
                     <thead class="thead-light">
                       <tr>
-                        <th scope="col">S/N</th>
                         <th scope="col">Name of Stock</th>
                         <th scope="col">Price of Stock</th>
                         <th scope="col">Quantity of Stock</th>
+                        <th scope="col">Position of Stock</th>
                       </tr>
                   </table>
         </div>
@@ -163,28 +166,68 @@
                 );
 
                 const result = await response.json();
-                console.log(result)
                 if (response.status === 200) {
-                    var name = result.results.data.profile_result.profile.name
-                    console.log(name)
-                    $('#welcome').append(name)
 
-                    var balance = result.results.data.funds_result.fund.balance
-                    var spent = result.results.data.funds_result.fund.spent
+                    var name = result.user_information.data.profile_result.profile.name
+                    var userid = result.user_information.data.profile_result.profile.user_id
+                    var email = result.user_information.data.profile_result.profile.email
+
+                    $('#welcome').append(name)
+                    $('#userid').append(userid)
+                    $('#email').append(email)
+
+                    var balance = result.user_information.data.funds_result.fund.balance
+                    var spent = result.user_information.data.funds_result.fund.spent
                     $('#left').append(balance)
                     $('#spent').append(spent)
 
-                    var rows = ""
-                    var stocks = result.results.data.portfolio_result.stocks
+                    // to retrieve the price and quantity of stocks under user
+                    var stocks = result.user_information.data.portfolio_result.stocks
+                    console.log(stocks)
+                    var stocks_array = []
 
-                    for (const stock of stocks) {
-                        eachRow = "<td>" + stock.stock_id + "</td>" +
-                                  "<td>" + stock.price + "</td>" +
-                                  "<td>" + stock.quantity + "</td" ;
-                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>"
+                    var market_stocks = result.user_stocks.data.stock_results
+                    var market_prices = []
+
+                    for (market_stock in market_stocks) {
+                        market_price = market_stocks[market_stock]['results']['historical_data']['one_day']['price'][0] ;
+                        market_prices.push(market_price)
                     }
 
-                    $('#stocks').append(rows) ;
+                    var overall_value = 0
+                    var position = ""
+                    var rows = ""
+ 
+                    // to go into the json object
+                    for (var i = 0 ; i < market_prices.length ; i++) {
+                        var stock = stocks[i]
+                        console.log(stock)
+                        eachRow = "<td>" + stock.stock_id + "</td>" +
+                                  "<td>" + stock.price + "</td>" +
+                                  "<td>" + stock.quantity + "</td>"
+                        stocks_array.push([stock.price, stock.quantity])
+                        console.log(eachRow)
+
+                        
+                        difference = (market_prices[i] - stocks_array[i][0]) * stocks_array[i][1]
+                        overall_value += difference
+                        if (market_prices[i] > stocks_array[i][0]) {
+                            eachRow += "<td style='color: green'>gain</td>"
+                        }
+                        else { 
+                            eachRow += "<td style='color: red'>loss</td>"
+                        }
+
+                        console.log(eachRow)
+                        
+                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>" ;
+                    }
+
+                    rows += "<tr><td><td><th>Overall Profit/Loss:<td>" + overall_value + "</td></th></td></td>"
+                    $('#stocks').append(rows)                    
+                    overall_value = Math.round(overall_value, 2)
+                    $('#overall').append(overall_value) ;
+
                 }
 
                 else if (response.status == 404) {

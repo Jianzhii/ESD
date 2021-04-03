@@ -13,6 +13,7 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+<<<<<<< Updated upstream
 portfolioURL = environ.get('portfolio_URL') or "http://127.0.0.1:5001/portfolio"
 fundsURL = environ.get('funds_URL') or "http://127.0.0.1:5002/funds"
 profileURL = environ.get('profile_URL') or "http://127.0.0.1:5003/profile"
@@ -25,11 +26,32 @@ def userprofile(user_id):
         print("\nReceived information:", user_id)
         # print(type(information))
         result = processPortfolio(user_id)
+=======
+portfolioURL = "http://127.0.0.1:5001/portfolio"
+fundsURL = "http://127.0.0.1:5002/funds"
+profileURL = "http://127.0.0.1:5003/profile"
+yahooURL = "http://127.0.0.1:5900/stock"
+errorURL = "http://127.0.0.1:5005/error"
+
+
+@app.route("/userprofile", methods=["POST"])
+def userprofile():
+    # Simple check of input format and data of the request are JSON
+
+    if request.is_json:
+        try:
+            userid = request.get_json()
+            print("\nReceived information in JSON:", userid)
+    
+            user_stocks = processStocks(userid) # returns information of stocks under user
+            user_information = processPortfolio(userid) # returns information of user
+>>>>>>> Stashed changes
 
         if result['code'] in range(200,300):
             return jsonify({
                 "code": 200,
-                "results": result
+                "user_stocks": user_stocks,
+                "user_information": user_information
             }),200 
         else: 
             return jsonify(result), 500
@@ -47,6 +69,29 @@ def userprofile(user_id):
             "message": "userprofile.py internal error: " + ex_str
         }), 500
 
+
+def processStocks(userid):
+    
+    name = userid['user_id'] 
+
+    print('\-----Invoking Portfolio microservice----') # calls portfolio microservice to get the stocks under the user
+    personal_stocks_result = invoke_http(portfolioURL + "/" + name, method="GET")
+    print('personal stocks result', personal_stocks_result)
+    
+    stocks = personal_stocks_result['stocks']
+    stock_list = []
+    for stock in stocks:
+        stockid = stock['stock_id']
+        stock_results = invoke_http(yahooURL + "/" + stockid, method="GET")
+        stock_list.append(stock_results)
+    
+    return {
+        "code": 201,
+        "data": {
+            "stock_results": stock_list
+        }
+    }
+    
 
 def processPortfolio(userid):
     print('\n----Invoking profile microservice----')
@@ -99,6 +144,7 @@ def processPortfolio(userid):
     print('portfolio result: ', portfolio_result)
 
     print('\n----Invoking funds microservice----')
+<<<<<<< Updated upstream
     funds_result = invoke_http(fundsURL + "/" + userid, method="GET")
     # Sending error to error.py if there are issues with retriving funds information 
     if funds_result['code'] not in range(200, 300):
@@ -119,6 +165,10 @@ def processPortfolio(userid):
 
         return funds_result
     print('funds result: ', funds_result)
+=======
+    funds_result = invoke_http(fundsURL + "/" + name, method="GET")
+    print('funds result: ', funds_result)    
+>>>>>>> Stashed changes
 
     return {
         "code": 201,
