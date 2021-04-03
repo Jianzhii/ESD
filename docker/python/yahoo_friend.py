@@ -75,14 +75,13 @@ def stock_info(stock_id):
     try: 
         stock = yf.Ticker(stock_id)
         stock_info = stock.info
-
+        
         one_day = stock.history(period='1d')
         one_week = stock.history(period='1wk')
         one_month = stock.history(period='1mo')
         six_month = stock.history(period='6mo')
         
-        return jsonify(
-            {
+        result = {
                 "code": 200,
                 "results": {
                     "name": stock_info['longName'],
@@ -115,9 +114,10 @@ def stock_info(stock_id):
                     }
                 }
             }
-        )
 
-    except ValueError or KeyError or NameError:
+        return jsonify(result)
+
+    except (ValueError, KeyError, NameError):
         url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-statistics"
 
         querystring = {"symbol": stock_id}

@@ -25,7 +25,7 @@
 
     <script>
         // sessionStorage.clear()
-        // sessionStorage.setItem('stock_id','TSLA');
+        // sessionStorage.setItem('stock_id','MIPR.SI');
     </script>
 
     <title>Document</title>
@@ -258,6 +258,9 @@
                 document.getElementById('buyPrice').defaultValue = Math.max(stock_info['ask'], stock_info['open']);
                 document.getElementById('sellPrice').defaultValue = Math.min(stock_info['bid'], stock_info['open']);
 
+                if (stock_info['name'] == null) { 
+                    stock_info['name'] = sessionStorage.getItem('stock_id');
+                }
 
                 // Inputting all stock information into webpage
                 document.getElementById('name').append(stock_info['name']);
