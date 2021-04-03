@@ -282,6 +282,7 @@ services:
       portfolio_URL: http://portfolio:5001/portfolio
       funds_URL: http://funds:5002/funds
       profile_URL: http://profile:5003/profile
+      yahoo_URL: http://yahoo_friend:5900/stock 
       PYTHONUNBUFFERED: 1
     ports:
       - "5008:5008"
