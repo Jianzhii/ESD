@@ -28,7 +28,8 @@ def processError(errorMsg):
     print("Printing the error message:")
     try:
         error = json.loads(errorMsg)
-        print("--JSON:", error)
+        print(error['message'])
+        print(error)
     except Exception as e:
         print("--NOT JSON:", e)
         print("--DATA:", errorMsg)

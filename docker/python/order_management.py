@@ -25,8 +25,6 @@ CORS(app)
 portfolio_url = environ.get(
     'portfolio_URL') or "http://localhost:5001/portfolio"
 funds_url = environ.get('funds_URL') or "http://localhost:5002/funds"
-# profile_url = environ.get('portfolio_URL') or "http://localhost:5003/profile"
-yahoo_friends_url = ""
 ##############################################################
 
 
@@ -92,16 +90,15 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
     print('\n-----Invoking funds microservice-----')
     print(user_id, amount)
 
-    json = {
+    buy_data = {
         "action": "SPEND",
         "amount": amount
     }
 
     # Checking funds availability
-    avail = invoke_http(funds_url + "/" + user_id, method="PUT", json=json)
-    code = avail["code"]
-    message = avail['message']
-    print (code, message)
+    funds_result = invoke_http(funds_url + "/" + user_id, method="PUT", json=buy_data)
+    code = funds_result["code"]
+    message = json.dumps(funds_result)
    
 
     if code not in range(200, 300):
@@ -109,18 +106,13 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         #print('\n\n-----Invoking error microservice as order fails-----')
         print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
 
-        # invoke_http(error_URL, method="POST", json=order_result)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
                                          body=message, properties=pika.BasicProperties(delivery_mode=2))
-        # make message persistent within the matching queues until it is received by some receiver
-        # (the matching queues have to exist and be durable and bound to the exchange)
 
-        # - reply from the invocation is not used;
-        # continue even if this invocation fails
         print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), avail)
+            code), funds_result)
 
-        return avail
+        return funds_result
     else:
 
         # 4. Record new order
@@ -129,7 +121,6 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         print(
             '\n\n-----Publishing the (order info) message with routing_key=order.info-----')
 
-        # invoke_http(activity_log_URL, method="POST", json=order_result)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info",
                                          body=message)
 
@@ -138,7 +129,7 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         # continue even if this invocation fails
 
         print('\n-----Invoking portfolio microservice-----')
-        json = {
+        portfolio_data = {
             "user_id": user_id,
             "stock_id": stock_id,
             "quantity": qty,
@@ -146,10 +137,20 @@ def processBuy(user_id, stock_id, pricePerStock, qty, amount):
         }
 
         # Updating portfolio on purchase
-        avail = invoke_http(portfolio_url, method="POST", json=json)
-        if avail['code'] not in range(200, 300):
-            return avail
+        portfolio_result = invoke_http(portfolio_url, method="POST", json=portfolio_data)
+        message = json.dumps(portfolio_result)
+        if portfolio_result['code'] not in range(200, 300):
+            return portfolio_result
         else:
+
+            print( '\n\n-----Publishing the (order info) message with routing_key=order.info-----')
+
+            # invoke_http(activity_log_URL, method="POST", json=order_result)
+            amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info",
+                                            body=message)
+
+            print("\nOrder published to RabbitMQ Exchange.\n")
+
             return True
 
 @app.route('/order/sell', methods=['PUT'])
@@ -217,16 +218,16 @@ def sell_stocks():
 def processSell(user_id, stock_id, qty, amount):
     print('\n-----Invoking portfolio microservice-----')
 
-    json = {
+    sales = {
         "user_id": user_id,
         "stock_id": stock_id,
         "quantity": qty
     }
 
     # Checking on stocks availability in portfolio and update accordingly
-    avail = invoke_http(portfolio_url, method="PUT", json=json)
-    code = avail["code"]
-    message = avail['message']
+    portfolio_results = invoke_http(portfolio_url, method="PUT", json=sales)
+    code = portfolio_results["code"]
+    message = json.dumps(portfolio_results)
 
     if code not in range(200, 300):
         # Inform the error microservice
@@ -242,9 +243,9 @@ def processSell(user_id, stock_id, qty, amount):
         # - reply from the invocation is not used;
         # continue even if this invocation fails
         print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), avail)
+            code), portfolio_results)
 
-        return avail
+        return portfolio_results
     else:
          # 4. Record new order
         # record the activity log anyway
@@ -261,14 +262,22 @@ def processSell(user_id, stock_id, qty, amount):
         # continue even if this invocation fails
 
         print('\n-----Invoking funds microservice-----')
-        json = {
+        funds_top_up = {
             "action": "LOAD",
             "amount": amount
         }
 
         # Updating funds after successful sales
-        invoke_http(funds_url + "/" + user_id, method="PUT", json=json)
-        return avail
+        funds_results = invoke_http(funds_url + "/" + user_id, method="PUT", json=funds_top_up)
+        message = json.dumps(funds_results)
+        print( '\n\n-----Publishing the (order info) message with routing_key=order.info-----')
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info",
+                                         body=message)
+
+        print("\nOrder published to RabbitMQ Exchange.\n")
+        
+        return portfolio_results
 
 
 if __name__ == '__main__':

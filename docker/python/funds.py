@@ -139,7 +139,7 @@ def update_order(user_id):
             return jsonify(
                 {
                     "code": 200,
-                    "message": "Funds updated",
+                    "message": "Funds added",
                     "data": fund.json()
                 }
             ), 200
@@ -163,7 +163,7 @@ def update_order(user_id):
                 return jsonify(
                     {
                         "code": 201,
-                        "message": "Funds updated",
+                        "message": "Funds deducted",
                         "data": fund.json()
                     }
                 ), 201

@@ -26,6 +26,7 @@ def callback(channel, method, properties, body): # required signature for the ca
 
 def processOrderLog(order):
     print("Recording an order log:")
+    print(order['message'])
     print(order)
 
 
