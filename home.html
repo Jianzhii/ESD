@@ -180,7 +180,12 @@
 
     // Calling market information microservice
     $(async() => {
+
+        // API Gateway 
         var stockID_url = "http://127.0.0.1:8000/market";
+
+        // Non-API Gateway
+        // var stockInfo_url = "http://127.0.0.1:5900/market";
 
         try {
             const response = 
@@ -305,7 +310,12 @@
         
         $(async() => {
             var stock_id = document.getElementById('search').value;
+
+            // API Gateway
             var stockID_url = "http://127.0.0.1:8000/stock/" + stock_id;
+            
+            // Non-API Gateway
+            // var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
 
             try {
                 const response = 
