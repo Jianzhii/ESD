@@ -20,6 +20,7 @@
 
     <script>
         sessionStorage.setItem('prev', 'stock.html');
+        sessionStorage["PricePerStock"] = "Please Wait";
         console.log(sessionStorage.getItem('user_id'))
     </script>
 
@@ -352,7 +353,9 @@
             if (response.status === 200) {
 
                 var stock_info = result.results;
-                sessionStorage["PricePerStock"] = stock_info['ask']
+                sessionStorage["PricePerStock"] = stock_info['ask'];
+                document.getElementById('currPrice').innerText = "Price Per Stock: $" + stock_info['ask'];
+                document.getElementById('currPrice2').innerText = "Price Per Stock: $" + stock_info['ask'];
                 document.getElementById('name').append(stock_info['name']);
                 document.getElementById('latest_price').append((stock_info['historical_data']['one_day']['price'][0]));
                 document.getElementById('previousClose').append(stock_info['previousClose']);
@@ -474,7 +477,7 @@
             if (user_id == undefined) {
                 window.location.replace("signin.html");
             }
-            
+
             var stock_id = sessionStorage.getItem('stock_id');
             var price = sessionStorage["PricePerStock"];
             var sellQty = document.getElementById('sellQty').value;
