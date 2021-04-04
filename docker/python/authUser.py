@@ -3,7 +3,7 @@
 #############################################################
 
 from flask import Flask, request,jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import os
 import sys
 from os import environ
@@ -15,7 +15,7 @@ from google.auth.transport import requests
 app = Flask(__name__)
 app.secret_key = "SrocErkkgz0zd15PykMxuSUwtzidl2Yd"
 
-CORS(app)
+CORS(app, support_credentials=True)
 
 ############# URLS to other microservices ####################
 #portfolio_url = environ.get('portfolio_URL') or "http://localhost:5001/portfolio"
@@ -28,6 +28,7 @@ CLIENT_ID = "954992833627-gdo27oikggjmrrqhc6ai2hq8ncmcrvjm.apps.googleuserconten
 
 
 @app.route("/auth", methods=['POST'])
+@cross_origin(supports_credentials=True)
 def auth():
     print('-----Starting Auth Microservice-----')
     token = request.get_data().decode('utf-8')

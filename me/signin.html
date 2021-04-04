@@ -29,6 +29,8 @@
   <meta name="google-signin-client_id"
     content="954992833627-gdo27oikggjmrrqhc6ai2hq8ncmcrvjm.apps.googleusercontent.com">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="shortcut icon" type="image/png" href="stonks.png" />
+
   <style>
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -55,7 +57,7 @@
 
       // The ID token you need to pass to your backend:
       var id_token = googleUser.getAuthResponse().id_token;
-      //console.log("ID Token: " + id_token);
+      console.log(id_token);
 
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'http://localhost:8000/auth');
@@ -81,14 +83,8 @@
   </script>
 
   <script>
-    function signOut() {
-      var auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        console.log('User signed out.');
-        sessionStorage.clear()
-        window.location.replace("index.html");
-      });
-
+    function goBack() {
+      window.location.replace("index.html")
     }
   </script>
 </head>
@@ -97,13 +93,13 @@
 
   <main class="form-signin">
     <form>
-      <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+      <img class="mb-4" src="./stonks.png" alt="" width="300" height="222">
       <h1 class="h3 mb-3 fw-normal">Welcome to $tonks</h1>
       <p>Log in to buy, sell and manage your portfolio.</p>
       <div class="d-flex justify-content-center" style="margin-top: 20px;">
         <div class="g-signin2" style="margin-right: 20px;" data-onsuccess="onSignIn" data-theme="dark"></div>
 
-        <button class="w-100 btn btn-md btn-primary" onclick="signOut();">Sign out</button>
+        <a class="btn btn-primary" href='index.html'>Go back</a>
 
       </div>
       <p class="mt-5 mb-3 text-muted">&copy; esd g1t5</p>

@@ -37,19 +37,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
         integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
         crossorigin="anonymous"></script>
-
+    <link rel="shortcut icon" type="image/png" href="stonks.png" />
 </head>
 
 <body>
 
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="../me/">$tonks manager</a>
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="index.html">$tonks manager</a>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
             aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <input class="form-control form-control-dark w-100" type="text" placeholder="Search company name"
+        <input id="search" class="form-control form-control-dark w-100" type="text" placeholder="Search Stock ID"
             aria-label="Search">
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
@@ -65,7 +65,7 @@
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="../me/">
+                            <a class="nav-link" aria-current="page" href="index.html">
                                 <span data-feather="shopping-cart"></span>
                                 Market
                             </a>
@@ -76,32 +76,6 @@
                                 My Dashboard
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">
-                                <span data-feather="file"></span>
-                                My Buys
-                            </a>
-                        </li>
-
-                        <h6
-                            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            <span>Activity</span>
-                            <a class="link-secondary disabled" href="#" aria-label="Add a new report">
-                                <span data-feather="plus-circle"></span>
-                            </a>
-                        </h6>
-                        <ul class="nav flex-column mb-2">
-                            <li class="nav-item">
-                                <a class="nav-link disabled" href="#">
-                                    <span data-feather="file-text"></span>
-                                    Previous Buys
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link disabled" href="#">
-                                    <span data-feather="file-text"></span>
-                                    Watchlist News
-                                </a>
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -279,6 +253,61 @@
 
     } else {
         document.getElementById('signedin').innerHTML = "<a class='nav-link' href='signin.html'>Sign in</a>";
+    }
+
+    var search = document.getElementById("search");
+
+    search.addEventListener("keyup", function (event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            var input = document.getElementById("search").value;
+            alert("Searching for: " + input)
+            search_stock(input)
+
+        }
+    });
+
+    // Function to check if stock exist
+    function search_stock(input) {
+        $(async () => {
+            var stock_id = document.getElementById('search').value;
+            // API Gateway
+            var stockInfo_url = "http://127.0.0.1:8000/stock/" + input;
+
+            // Non-API Gateway
+            // var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
+
+            try {
+                const response =
+                    await fetch(
+                        stockInfo_url, { method: 'GET' }
+                    );
+
+                const result = await response.json();
+                if (response.status === 200) {
+
+                    sessionStorage.setItem('stock_id', stock_id);
+                    window.location.href = "stock.html";
+
+                }
+
+                else if (response.status == 500) {
+                    alert(`${input} do not exist`);
+                }
+                else {
+                    throw response.status;
+                }
+            }
+
+            catch (error) {
+                showError
+                    (`There is a problem retrieving ${sessionStorage.getItem('id')} data, please try again later.<br />` + error);
+            }
+
+        });
+
     }
 </script>
 
