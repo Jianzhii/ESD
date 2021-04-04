@@ -47,7 +47,7 @@
 <body>
 
   <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="../me/">$tonks manager</a>
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="index.html">$tonks manager</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
       data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -121,6 +121,7 @@
                     <th scope="col">Price</th>
                     <th scope="col">Change</th>
                     <th scope="col">Quantity</th>
+                    <th scope="col">Position</th>
                   </tr>
                 </thead>
               </table>
@@ -255,7 +256,8 @@
             eachRow += "<td> <button type='button' class='btn btn-danger symbol' onclick='send_stock_id(this)'>" + stocks[i]["stock_id"] + "</button></td>"
           }
           eachRow += "<td>" + info[i][0] + "</td>" +
-            "<td>" + info[i][1] + "</td>" +
+            "<td>" + info[i][1] + "</td>" + 
+            "<td>" + change + "%</td>" + 
             "<td>" + stock.quantity + "</td>"
           stocks_array.push([stock.price, stock.quantity])
 
@@ -293,7 +295,7 @@
   function showError(message) {
     $('#error').append("<label style='color:red; text-align:center'>" + message + "</label>");
   };
-  
+
   function send_stock_id(tag) {
     var stock_id = tag.innerText;
     sessionStorage.setItem('stock_id', stock_id);
