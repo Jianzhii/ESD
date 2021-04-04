@@ -37,6 +37,7 @@ def auth():
         idinfo = id_token.verify_oauth2_token(
             token, requests.Request(), CLIENT_ID)
         userid = idinfo['sub']
+        print(userid)
         name = idinfo['name']
         email = idinfo['email']
         check(userid, name, email)
