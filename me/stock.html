@@ -434,12 +434,12 @@
                 "price": price
             };
 
-            var stockID_url = "http://127.0.0.1:8000/order/buy";
+            var buy_url = "http://127.0.0.1:8000/order/buy";
 
             try {
                 const response =
                     await fetch(
-                        stockID_url, {
+                        buy_url, {
                         method: 'PUT',
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(buy_details)
@@ -470,13 +470,15 @@
     // Calling Microservice to sell stocks
     function sellStocks() {
         $(async () => {
-            if (sessionStorage.getItem("user_id") == undefined) {
+            var user_id = sessionStorage.getItem("user_id");
+            if (user_id == undefined) {
                 window.location.replace("signin.html");
             }
-            var user_id = 'Apple TAN';
+            
             var stock_id = sessionStorage.getItem('stock_id');
-            var price = document.getElementById('sellPrice').value;
+            var price = sessionStorage["PricePerStock"];
             var sellQty = document.getElementById('sellQty').value;
+            console.log(sellQty);
 
             var sell_details = {
                 "user_id": user_id,
@@ -485,12 +487,12 @@
                 "price": price
             };
 
-            var stockID_url = "http://127.0.0.1:8000/order/sell";
+            var sell_url = "http://127.0.0.1:8000/order/sell";
 
             try {
                 const response =
                     await fetch(
-                        stockID_url, {
+                        sell_url, {
                         method: 'PUT',
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(sell_details)

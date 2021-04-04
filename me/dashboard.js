@@ -1,32 +1,53 @@
+/* globals Chart:false, feather:false */
 
-// Function to create the graph for historical price of stock
+(function () {
+  'use strict'
 
-function graph(date, price) {
-  var ctx = document.getElementById('myChart').getContext('2d');
+  feather.replace()
+
+  // Graphs
+  var ctx = document.getElementById('myChart')
+  // eslint-disable-next-line no-unused-vars
   var myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-      labels: date,
+    type: 'line',
+    data: {
+      labels: [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ],
       datasets: [{
-          data: price,
-          lineTension: 0,
-          backgroundColor: 'transparent',
-          borderColor: '#007bff',
-          borderWidth: 4,
-          pointBackgroundColor: '#007bff'
+        data: [
+          15339,
+          21345,
+          18483,
+          24003,
+          23489,
+          24092,
+          12034
+        ],
+        lineTension: 0,
+        backgroundColor: 'transparent',
+        borderColor: '#007bff',
+        borderWidth: 4,
+        pointBackgroundColor: '#007bff'
       }]
-      },
-      options: {
+    },
+    options: {
       scales: {
-          yAxes: [{
+        yAxes: [{
           ticks: {
-              beginAtZero: false
+            beginAtZero: false
           }
-          }]
+        }]
       },
       legend: {
-          display: false
+        display: false
       }
-      }
+    }
   })
-}
+})()

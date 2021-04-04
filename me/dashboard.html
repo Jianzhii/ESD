@@ -17,10 +17,10 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
     crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 
   <script>
     sessionStorage.setItem('prev', 'dashboard.html');
+    console.log(sessionStorage.getItem('prev'));
     console.log(sessionStorage.getItem('user_id'));
     if (sessionStorage.getItem('user_id') == null) {
       window.location.replace("signin.html")
@@ -34,13 +34,7 @@
       text-align: center;
     }
   </style>
-  <!-- Graph Stuff -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
-    integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
-    integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
-    crossorigin="anonymous"></script>
+
   <link rel="shortcut icon" type="image/png" href="stonks.png" />
 </head>
 
@@ -105,6 +99,17 @@
                   <p class="card-text" id="spent">
                     Amount Spent: $
                   </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-5">
+              <div class="card bg-light mb-3 h-100">
+                <div class="card-header" style='font-size:26px ; text-align: center;'>
+                  <i class="fas fa-user-circle" style='font-size:36px'></i>
+                  Profit</i>
+                </div>
+                <div class="card-body">
+                  <p class="container" id="profit"></p>
                 </div>
               </div>
             </div>
@@ -256,8 +261,8 @@
             eachRow += "<td> <button type='button' class='btn btn-danger symbol' onclick='send_stock_id(this)'>" + stocks[i]["stock_id"] + "</button></td>"
           }
           eachRow += "<td>" + info[i][0] + "</td>" +
-            "<td>" + info[i][1] + "</td>" + 
-            "<td>" + change + "%</td>" + 
+            "<td>" + info[i][1] + "</td>" +
+            "<td>" + change + "%</td>" +
             "<td>" + stock.quantity + "</td>"
           stocks_array.push([stock.price, stock.quantity])
 
@@ -273,10 +278,10 @@
           rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
         }
 
-        rows += "<tr><td><td><th>Overall Profit/Loss:<td>" + overall_value + "</td></th></td></td>"
-        $('#stocks').append(rows)
-        overall_value = Math.round(overall_value, 2)
-        $('#overall').append(overall_value);
+        //rows += "<tr><td><td><th>Overall Profit/Loss:<td>" + overall_value + "</td></th></td></td>";
+        $('#stocks').append(rows);
+        //overall_value = Math.round(overall_value, 2);
+        $('#profit').append(overall_value);
 
       }
 
