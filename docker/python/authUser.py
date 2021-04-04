@@ -2,7 +2,7 @@
 # Microservice to manage all buy/sell orders from customers #
 #############################################################
 
-from flask import Flask, request, session, redirect,jsonify
+from flask import Flask, request,jsonify
 from flask_cors import CORS
 import os
 import sys

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.80.0">
+  <title>Log in</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
+
+  <!-- Bootstrap core CSS -->
+
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+  <!-- Google Platform Library-->
+  <meta name="google-signin-scope" content="profile email">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id"
+    content="954992833627-gdo27oikggjmrrqhc6ai2hq8ncmcrvjm.apps.googleusercontent.com">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+
+  <!-- Custom styles for this template -->
+  <link href="./signin.css" rel="stylesheet">
+
+  <script>
+    function onSignIn(googleUser) {
+      // Useful data for your client-side scripts:
+      var profile = googleUser.getBasicProfile();
+
+      // The ID token you need to pass to your backend:
+      var id_token = googleUser.getAuthResponse().id_token;
+      //console.log("ID Token: " + id_token);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:8000/auth');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function () {
+        response = JSON.parse(xhr.responseText)
+        var user_id = response['userid']
+        var name = response['name']
+
+        console.log('Signed in as: ' + name);
+        if (user_id != "invalid token" || user_id != "undefined") {
+          console.log(user_id)
+          console.log(name)
+          sessionStorage.setItem('user_id', user_id)
+          sessionStorage.setItem('name', name)
+          console.log(sessionStorage.getItem('user_id'))
+          prev = sessionStorage.getItem('prev')
+          window.location.replace(prev)
+        }
+      };
+      xhr.send(id_token)
+    }
+  </script>
+
+  <script>
+    function signOut() {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+        sessionStorage.clear()
+        window.location.replace("index.html");
+      });
+
+    }
+  </script>
+</head>
+
+<body class="text-center">
+
+  <main class="form-signin">
+    <form>
+      <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+      <h1 class="h3 mb-3 fw-normal">Welcome to $tonks</h1>
+      <p>Log in to buy, sell and manage your portfolio.</p>
+      <div class="d-flex justify-content-center" style="margin-top: 20px;">
+        <div class="g-signin2" style="margin-right: 20px;" data-onsuccess="onSignIn" data-theme="dark"></div>
+
+        <button class="w-100 btn btn-md btn-primary" onclick="signOut();">Sign out</button>
+
+      </div>
+      <p class="mt-5 mb-3 text-muted">&copy; esd g1t5</p>
+    </form>
+
+  </main>
+
+
+
+
+</body>
+
+</html>

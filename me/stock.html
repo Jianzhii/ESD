@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+    <script>
+        sessionStorage.setItem('prev', 'stock.html');
+        console.log(sessionStorage.getItem('user_id'))
+    </script>
+
+    <title>Document</title>
+
+    <style>
+        .table td {
+            text-align: center;
+        }
+    </style>
+    <!-- Graph Stuff -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="../me/">$tonks manager</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <input class="form-control form-control-dark w-100" type="text" placeholder="Search company name"
+            aria-label="Search">
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <span id="signedin">
+                </span>
+            </li>
+        </ul>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light nav-sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="../me/">
+                                <span data-feather="shopping-cart"></span>
+                                Market
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <span data-feather="home"></span>
+                                My Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#">
+                                <span data-feather="file"></span>
+                                My Buys
+                            </a>
+                        </li>
+
+                        <h6
+                            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Activity</span>
+                            <a class="link-secondary disabled" href="#" aria-label="Add a new report">
+                                <span data-feather="plus-circle"></span>
+                            </a>
+                        </h6>
+                        <ul class="nav flex-column mb-2">
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#">
+                                    <span data-feather="file-text"></span>
+                                    Previous Buys
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#">
+                                    <span data-feather="file-text"></span>
+                                    Watchlist News
+                                </a>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div>
+                    <h1 id='title'></h1>
+                    <br>
+                    <h3 id='name'></h3>
+                    <p id='error'></p>
+                </div>
+                <br>
+
+                <div class='row mb-3'>
+                    <div class='col'>
+                        <p id='datetime'>Stock information as of: </p>
+                    </div>
+                    <div class='col d-flex justify-content-end'>
+                        <button type="button" class="btn btn-primary mr-3" data-toggle="modal" data-target="#buyModal">
+                            Buy
+                        </button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sellModal">
+                            Sell
+                        </button>
+                    </div>
+                </div>
+
+                <div class='container'>
+
+                    <!-- Row -->
+                    <div class='row'>
+
+                        <!-- Top Section (all quantitative information)-->
+
+                        <table class='table'>
+                            <tbody>
+                                <tr>
+                                    <th colspan=2> Last Transacted Price:</th>
+                                    <td id='latest_price' colspan=2> </td>
+                                </tr>
+
+                                <tr>
+                                    <th> Previous Close:</th>
+                                    <td id='previousClose'></td>
+
+                                    <th> Asking Price:</th>
+                                    <td id='ask'> </td>
+                                </tr>
+
+                                <tr>
+                                    <th> Open:</th>
+                                    <td id='open'></td>
+
+                                    <th> Ask Size:</th>
+                                    <td id='askSize'></td>
+                                </tr>
+
+                                <tr>
+                                    <th> Volume:</th>
+                                    <td id='volume'></td>
+
+                                    <th> Bidding Price:</th>
+                                    <td id='bid'></td>
+                                </tr>
+
+                                <tr>
+                                    <th> Average Volume:</th>
+                                    <td id='averageVolume'></td>
+
+                                    <th> Bid Size:</th>
+                                    <td id='bidSize'></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <!-- Bottom Section (Graph)-->
+                    <div class='row'>
+                        <button type="button" class="btn btn-info mr-3" id='1d'>1 Day</button>
+                        <button type="button" class="btn btn-info mr-3" id='1wk'>1 Week</button>
+                        <button type="button" class="btn btn-info mr-3" id='1mo'>1 Month</button>
+                        <button type="button" class="btn btn-info mr-3" id='6mo'>6 Months</button>
+
+                        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+                    </div>
+
+                </div>
+
+                <!-- Modals -->
+                <div id="modals">
+                    <!-- Buy -->
+                    <div class="modal fade" id="buyModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="container">
+                                        <div class="row">
+                                            <h5 class="modal-title" id="buyTitle">Buying </h5>
+                                        </div>
+                                        <div class="row">
+                                            <h6 class="modal-title" id="currPrice2">Price Per Stock: $</h6>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for='buyQty'>Please indicate the quantity of stocks you wish to
+                                        purchase:</label>
+                                    <input class="form-control me-2" placeholder="Quantity to purchase" id='buyQty'>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        id='buyClose'>Close</button>
+                                    <button type="button" class="btn btn-primary" onclick='buyStocks()'>Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sell -->
+                    <div class="modal fade" id="sellModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="container">
+                                        <div class="row">
+                                            <h5 class="modal-title" id="sellTitle">Selling</h5>
+                                        </div>
+                                        <div class="row">
+                                            <h6 class="modal-title" id="currPrice">Price Per Stock: $</h6>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <label for='sellQty'>Please indicate the quantity of stocks you wish to
+                                        sell:</label>
+                                    <input class="form-control me-2" placeholder="Quantity to sell" id='sellQty'>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        id='sellClose'>Close</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick='sellStocks()'>Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </main>
+        </div>
+    </div>
+
+    <link href="dashboard.css" rel="stylesheet">
+    <script src="dashboard.js"></script>
+</body>
+
+<script>
+    var x = document.getElementById("modals");
+    if (sessionStorage.getItem('user_id') != null) {
+        name = sessionStorage.getItem('name').split(" ", 1);
+        document.getElementById('signedin').innerHTML = "<a class='nav-link' href='signout.html'> Welcome " + name + "</a>";
+
+    } else {
+        document.getElementById('signedin').innerHTML = "<a class='nav-link' href='signin.html'>Sign in</a>";
+    }
+</script>
+
+<script>
+    // Get Stock ID for the title 
+    document.getElementsByTagName("title")[0].innerText = sessionStorage.getItem('stock_id');
+    document.getElementById('buyTitle').innerText = "Buying " + sessionStorage.getItem('stock_id');
+    document.getElementById('sellTitle').innerText = "Selling " + sessionStorage.getItem('stock_id');
+    document.getElementById('currPrice').innerText = "Price Per Stock: $" + sessionStorage.getItem('PricePerStock');
+    document.getElementById('currPrice2').innerText = "Price Per Stock: $" + sessionStorage.getItem('PricePerStock');
+    document.getElementById("title").innerText = sessionStorage.getItem('stock_id');
+
+    // Get current date and time 
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "/"
+        + (currentdate.getMonth() + 1) + "/"
+        + currentdate.getFullYear() + ", "
+        + (currentdate.getHours() < 10 ? '0' : '')
+        + currentdate.getHours() + ":"
+        + (currentdate.getMinutes() < 10 ? '0' : '')
+        + currentdate.getMinutes() + ":"
+        + (currentdate.getSeconds() < 10 ? '0' : '')
+        + currentdate.getSeconds();
+
+    document.getElementById("datetime").append(datetime);
+
+    // Calling microservice for the stock information 
+    $(async () => {
+        // API Gateway
+        var stockID_url = "http://127.0.0.1:8000/stock/" + sessionStorage.getItem('stock_id');
+
+        // Non-API Gateway
+        // var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('stock_id');
+
+        try {
+            const response =
+                await fetch(
+                    stockID_url, { method: 'GET' }
+                );
+
+            const result = await response.json();
+            if (response.status === 200) {
+
+                var stock_info = result.results;
+                sessionStorage["PricePerStock"] = stock_info['ask']
+                document.getElementById('name').append(stock_info['name']);
+                document.getElementById('latest_price').append((stock_info['historical_data']['one_day']['price'][0]));
+                document.getElementById('previousClose').append(stock_info['previousClose']);
+                document.getElementById('ask').append(stock_info['ask']);
+                document.getElementById('open').append(stock_info['open']);
+                document.getElementById('askSize').append(stock_info['askSize'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                document.getElementById('volume').append(stock_info['volume'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                document.getElementById('bid').append(stock_info['bid']);
+                document.getElementById('bidSize').append(stock_info['bidSize'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                document.getElementById('averageVolume').append(stock_info['averageVolume'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+
+                // convert timestamp to date
+                for (i = 0; i < stock_info.historical_data.one_day.date.length; i++) {
+                    var date = new Date(stock_info.historical_data.one_day.date[i] / 1000000);
+                    stock_info.historical_data.one_day.date[i] = '"' + (date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()) + '"';
+                }
+
+                for (i = 0; i < stock_info.historical_data.one_week.date.length; i++) {
+                    var date = new Date(stock_info.historical_data.one_week.date[i] / 1000000);
+                    stock_info.historical_data.one_week.date[i] = '"' + (date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()) + '"';
+                }
+
+                for (i = 0; i < stock_info.historical_data.one_month.date.length; i++) {
+                    var date = new Date(stock_info.historical_data.one_month.date[i] / 1000000);
+                    stock_info.historical_data.one_month.date[i] = '"' + (date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()) + '"';
+                }
+
+                for (i = 0; i < stock_info.historical_data.six_month.date.length; i++) {
+                    var date = new Date(stock_info.historical_data.six_month.date[i] / 1000000);
+                    stock_info.historical_data.six_month.date[i] = '"' + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + '"';
+                }
+
+
+                document.getElementById('1d').setAttribute('onclick', 'graph([' + stock_info['historical_data']['one_day']['date'] + '],[' + stock_info['historical_data']['one_day']['price'] + '])');
+                document.getElementById('1wk').setAttribute('onclick', 'graph([' + stock_info['historical_data']['one_week']['date'] + '],[' + stock_info['historical_data']['one_week']['price'] + '])');
+                document.getElementById('1mo').setAttribute('onclick', 'graph([' + stock_info['historical_data']['one_month']['date'] + '],[' + stock_info['historical_data']['one_month']['price'] + '])');
+                document.getElementById('6mo').setAttribute('onclick', 'graph([' + stock_info['historical_data']['six_month']['date'] + '],[' + stock_info['historical_data']['six_month']['price'] + '])');
+
+
+                document.getElementById("1d").click();
+
+            }
+            else if (response.status == 500) {
+                showError(result.message);
+            }
+            else {
+                throw response.status;
+            }
+        }
+
+        catch (error) {
+            showError
+                (`There is a problem retrieving ${sessionStorage.getItem('id')} data, please try again later.<br />` + error);
+        }
+
+
+    });
+
+
+    function showError(message) {
+        $('#error').append("<label style='color:red; text-align:center'>" + message + "</label>");
+    };
+
+    // Calling Microservice to buy stocks
+    function buyStocks() {
+        $(async () => {
+            if (sessionStorage.getItem("user_id") == undefined) {
+                window.location.replace("signin.html");
+            }
+            var user_id = sessionStorage.getItem('user_id');
+            var stock_id = sessionStorage.getItem('stock_id');
+            var price = sessionStorage["PricePerStock"];
+            var buyQty = document.getElementById('buyQty').value;
+
+            var buy_details = {
+                "user_id": user_id,
+                "stock_id": stock_id,
+                "quantity": buyQty,
+                "price": price
+            };
+
+            var stockID_url = "http://127.0.0.1:8000/order/buy";
+
+            try {
+                const response =
+                    await fetch(
+                        stockID_url, {
+                        method: 'PUT',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(buy_details)
+                    }
+                    );
+
+                const result = await response.json();
+                if (response.status >= 200 && response.status < 300) {
+
+                    alert('Purchase order has been submitted for matching.');
+                    $('#buyClose').click();
+
+                }
+                else {
+                    alert(result.message);
+                }
+            }
+
+            catch (error) {
+                showError
+                    (`There is a problem processing the purchase order, please try again later.<br />` + error);
+            }
+
+        });
+    }
+
+
+    // Calling Microservice to sell stocks
+    function sellStocks() {
+        $(async () => {
+            if (sessionStorage.getItem("user_id") == undefined) {
+                window.location.replace("signin.html");
+            }
+            var user_id = 'Apple TAN';
+            var stock_id = sessionStorage.getItem('stock_id');
+            var price = document.getElementById('sellPrice').value;
+            var sellQty = document.getElementById('sellQty').value;
+
+            var sell_details = {
+                "user_id": user_id,
+                "stock_id": stock_id,
+                "quantity": sellQty,
+                "price": price
+            };
+
+            var stockID_url = "http://127.0.0.1:8000/order/sell";
+
+            try {
+                const response =
+                    await fetch(
+                        stockID_url, {
+                        method: 'PUT',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(sell_details)
+                    }
+                    );
+
+                const result = await response.json();
+                if (response.status >= 200 && response.status < 300) {
+
+                    alert('Sales order has been submitted for matching.');
+                    $('#sellClose').click();
+
+                }
+                else {
+                    alert(result.message);
+                }
+            }
+
+            catch (error) {
+                showError
+                    (`There is a problem processing the sales order, please try again later.<br />` + error);
+            }
+
+        });
+    }
+
+</script>
+
+</html>
