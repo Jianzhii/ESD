@@ -51,6 +51,7 @@
   <link href="./signin.css" rel="stylesheet">
 
   <script>
+
     function onSignIn(googleUser) {
       // Useful data for your client-side scripts:
       var profile = googleUser.getBasicProfile();
@@ -80,13 +81,12 @@
       };
       xhr.send(id_token)
     }
-  </script>
 
-  <script>
     function goBack() {
       window.location.replace("index.html")
     }
   </script>
+
 </head>
 
 <body class="text-center">

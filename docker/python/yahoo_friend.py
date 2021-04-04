@@ -19,12 +19,12 @@ CORS(app)
 
 # Keys to call Yahoo Finance API
 headers = {
-    'x-rapidapi-key': "c76e11c753msha38f73a10c16b1dp1443c3jsndf66c4b08501",
+    'x-rapidapi-key': "b09591b193mshad22b0d68b19f4ap167b63jsnceb43796bf13",
     'x-rapidapi-host': "apidojo-yahoo-finance-v1.p.rapidapi.com"
     }
 
 
-# second api key:  b09591b193mshad22b0d68b19f4ap167b63jsnceb43796bf13
+# second api key:   c76e11c753msha38f73a10c16b1dp1443c3jsndf66c4b08501
 
 
 # To get the top 10 gainers and losers of the day
