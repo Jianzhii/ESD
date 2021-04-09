@@ -20,8 +20,8 @@
 
   <script>
     sessionStorage.setItem('prev', 'dashboard.html');
-    console.log(sessionStorage.getItem('prev'));
-    console.log(sessionStorage.getItem('user_id'));
+    // console.log(sessionStorage.getItem('prev'));
+    // console.log(sessionStorage.getItem('user_id'));
     if (sessionStorage.getItem('user_id') == null) {
       window.location.replace("signin.html")
     };
@@ -232,11 +232,11 @@
 
         // to retrieve the price and quantity of stocks under user
         var stocks = result.user_information.data.portfolio_result.stocks
-        console.log(result)
+        // console.log(result)
         var stocks_array = []
 
         var market_stocks = result.user_stocks.data.stock_results
-        console.log(market_stocks);
+        // console.log(market_stocks);
         var info = []
 
         for (market_stock in market_stocks) {

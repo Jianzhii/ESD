@@ -7,11 +7,6 @@
   <meta name="description" content="">
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Hugo 0.80.0">
-  <!-- Google Platform Library-->
-  <meta name="google-signin-scope" content="profile email">
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
-  <meta name="google-signin-client_id"
-    content="954992833627-gdo27oikggjmrrqhc6ai2hq8ncmcrvjm.apps.googleusercontent.com">
   <title>Log in</title>
 
   <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
@@ -55,29 +50,42 @@
   <!-- Custom styles for this template -->
   <link href="./signin.css" rel="stylesheet">
 
-
   <script>
-    console.log(sessionStorage.getItem('prev'));
-    function goBack() {
-      prev = sessionStorage.getItem('prev');
-      window.location.replace(prev);
+    function onSignIn(googleUser) {
+      // Useful data for your client-side scripts:
+      var profile = googleUser.getBasicProfile();
+
+      // The ID token you need to pass to your backend:
+      var id_token = googleUser.getAuthResponse().id_token;
+      // console.log(id_token);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:8000/auth');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function () {
+        response = JSON.parse(xhr.responseText)
+        var user_id = response['userid']
+        var name = response['name']
+
+        console.log('Signed in as: ' + name);
+        if (user_id != "invalid token" || user_id != "undefined") {
+          // console.log(user_id)
+          // console.log(name)
+          sessionStorage.setItem('user_id', user_id)
+          sessionStorage.setItem('name', name)
+          // console.log(sessionStorage.getItem('user_id'))
+          prev = sessionStorage.getItem('prev')
+          window.location.replace(prev)
+        }
+      };
+      xhr.send(id_token)
     }
   </script>
 
   <script>
-    function signOut() {
-      var auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        console.log('User signed out.');
-        sessionStorage.clear()
-        window.location.replace("index.html")
-      });
-    }
-
-    function onLoad() {
-      gapi.load('auth2', function () {
-        gapi.auth2.init();
-      });
+    function goBack() {
+      prev = sessionStorage.getItem('prev')
+      window.location.replace(prev)
     }
   </script>
 </head>
@@ -87,10 +95,10 @@
   <main class="form-signin">
     <form>
       <img class="mb-4" src="./stonks.png" alt="" width="300" height="222">
-      <h1 id="welcome" class="h3 mb-3 fw-normal"></h1>
-      <p>Hope to see you again!</p>
-      <div class="d-flex justify-content-center" style="margin: 20px;">
-        <a style="margin-right: 20px;" class="btn btn-primary" href="#" onclick="signOut();">Sign out</a>
+      <h1 class="h3 mb-3 fw-normal">Welcome to $tonks</h1>
+      <p>Log in to buy, sell and manage your portfolio.</p>
+      <div class="d-flex justify-content-center" style="margin-top: 20px;">
+        <div class="g-signin2" style="margin-right: 20px;" data-onsuccess="onSignIn" data-theme="dark"></div>
 
         <a class="btn btn-primary" href='index.html'>Go back</a>
 
@@ -100,11 +108,9 @@
 
   </main>
 
-  <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
-  <script>
-    name = sessionStorage.getItem('name').split(" ", 1);
-    document.getElementById('signedin').innerText = "Welcome " + name;
-  </script>
+
+
+
 </body>
 
 </html>

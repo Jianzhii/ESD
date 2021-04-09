@@ -17,7 +17,7 @@ Steps to set up all API Gateway routing (Kong)
     Name: Userprofile
     URL: http://user_profile:5008/userprofile
 5. After service is created, click into routes and click add a route with the following parameters:
-    Path: /v1/userprofile
+    Path: /api/v1/userprofile
     Methods: GET
 
 # Set up for stock info micro service
@@ -25,7 +25,7 @@ Steps to set up all API Gateway routing (Kong)
     Name: stock_info
     URL: http://yahoo_friend:5900/stock
 7. After service is created, click into routes and click add a route with the following parameters:
-    Path: /v1/stock
+    Path: /api/v1/stock
     Methods: GET
 
 # Set up for market summary micro service
@@ -33,7 +33,7 @@ Steps to set up all API Gateway routing (Kong)
     Name: market_summary
     URL: http://yahoo_friend:5900/market
 9. After service is created, click into routes and click add a route with the following parameters:
-    Path: /v1/market
+    Path: /api/v1/market
     Methods: GET
 
 # Set up for buy stocks micro service
@@ -41,7 +41,7 @@ Steps to set up all API Gateway routing (Kong)
     Name: buy_stocks
     URL: http://order_management:5100/order/buy
 11. After service is created, click into routes and click add a route with the following parameters:
-    Path: /v1/order/buy
+    Path: /api/v1/order/buy
     Methods: PUT OPTIONS
 
 # Set up for sell stocks micro service
@@ -49,17 +49,17 @@ Steps to set up all API Gateway routing (Kong)
     Name: sell_stocks
     URL: http://order_management:5100/order/sell
 13. After service is created, click into routes and click add a route with the following parameters:
-    Path: /v1/order/sell
+    Path: /api/v1/order/sell
     Methods: PUT OPTIONS
 
     
-# Set up for sell stocks micro service
+# Set up for user authentication micro service
 14. Click service and create a new service with the following parameters:
-    Name: sell_stocks
+    Name: authUser
     URL: http://auth_user:5200/auth
 15. After service is created, click into routes and click add a route with the following parameters:
-    Path: /v1/auth
-    Methods: POST
+    Path: /api/v1/auth
+    Methods: POST OPTIONS
 
 
 16. After setting all the routes in Konga, go to all html files (home.html, stock.html, portfolio.html) and change all the URLs to the API Gateway URL.

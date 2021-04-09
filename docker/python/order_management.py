@@ -13,8 +13,8 @@ from os import environ
 import requests
 from invokes import invoke_http
 
-import amqp_setup
 import pika
+import amqp_setup
 import json
 
 app = Flask(__name__)

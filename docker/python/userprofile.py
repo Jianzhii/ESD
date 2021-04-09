@@ -23,7 +23,7 @@ def userprofile(user_id):
  
     try:
         # information = request.get_json()
-        print("\nReceived information:", user_id)
+        print("\nReceived information:", str(user_id))
         # print(type(information))
         user_stocks = processStocks(user_id) # returns information of stocks under user
         user_information = processPortfolio(user_id) # return information of user  
@@ -54,7 +54,7 @@ def userprofile(user_id):
 def processStocks(userid):
 
     print('\-----Invoking Portfolio microservice----') # calls portfolio microservice to get the stocks under the user
-    personal_stocks_result = invoke_http(portfolioURL + "/" + userid, method="GET")
+    personal_stocks_result = invoke_http(portfolioURL + "/" + str(userid), method="GET")
     print('personal stocks result', personal_stocks_result)
     
     stocks = personal_stocks_result['stocks']
@@ -75,7 +75,7 @@ def processStocks(userid):
 def processPortfolio(userid):
     print('\n----Invoking profile microservice----')
 
-    profile_result = invoke_http(profileURL + "/" + userid, method="GET")
+    profile_result = invoke_http(profileURL + "/" + str(userid), method="GET")
     print(profile_result)
     print(type(profile_result))
     code = profile_result['code']
@@ -102,7 +102,7 @@ def processPortfolio(userid):
     print('profile result: ', profile_result)
 
     print('\n----Invoking portfolio microservice----')
-    portfolio_result = invoke_http(portfolioURL + "/" + userid, method="GET")
+    portfolio_result = invoke_http(portfolioURL + "/" + str(userid), method="GET")
 
     # Sending error to error.py if there are issues with retriving portfolio information, below 500 as it will return 404 if there are no portfolio
     if portfolio_result['code'] not in range(200, 500):
@@ -125,7 +125,7 @@ def processPortfolio(userid):
     print('portfolio result: ', portfolio_result)
 
     print('\n----Invoking funds microservice----')
-    funds_result = invoke_http(fundsURL + "/" + userid, method="GET")
+    funds_result = invoke_http(fundsURL + "/" + str(userid), method="GET")
     # Sending error to error.py if there are issues with retriving funds information 
     if funds_result['code'] not in range(200, 300):
         # Inform the error microservice

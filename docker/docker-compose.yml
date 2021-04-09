@@ -174,8 +174,12 @@ services:
     depends_on:
       - funds
       - profile
+      - error
+      - rabbitmq
     environment:
-      profile_URL: http://portfolio:5003/profile
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      profile_URL: http://profile:5003/profile
       funds_URL: http://funds:5002/funds
       PYTHONUNBUFFERED: 1
     ports:

@@ -12,6 +12,10 @@ from invokes import invoke_http
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+import pika
+import amqp_setup
+import json
+
 app = Flask(__name__)
 app.secret_key = "SrocErkkgz0zd15PykMxuSUwtzidl2Yd"
 
@@ -20,7 +24,7 @@ CORS(app, support_credentials=True)
 ############# URLS to other microservices ####################
 #portfolio_url = environ.get('portfolio_URL') or "http://localhost:5001/portfolio"
 funds_url = environ.get('funds_URL') or "http://localhost:5002/funds"
-profile_url = environ.get('portfolio_URL') or "http://localhost:5003/profile"
+profile_url = environ.get('profile_URL') or "http://localhost:5003/profile"
 yahoo_friends_url = ""
 ##############################################################
 
@@ -31,7 +35,6 @@ CLIENT_ID = "954992833627-gdo27oikggjmrrqhc6ai2hq8ncmcrvjm.apps.googleuserconten
 @cross_origin(supports_credentials=True)
 def auth():
     print('-----Starting Auth Microservice-----')
-    print(type(request.get_data()))
     token = request.get_data().decode('utf-8')
 
     try:
@@ -54,25 +57,62 @@ def check(userid, name, email):
     # Checking if user exists
     print('\n-----Invoking profile microservice-----')
     print(userid)
-    json = {
+    user_info = {
         "name": name,
         "email": email
     }
-    avail = invoke_http(profile_url + "/" + userid, method="POST", json=json)
-    print(type(avail['code']))
+    avail = invoke_http(profile_url + "/" + userid, method="POST", json=user_info)
+    print(avail['code'])
+
+    message = json.dumps(avail)
     if avail['code'] == 404:
+
+        # Inform the error microservice
+        #print('\n\n-----Invoking error microservice as order fails-----')
+        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
+                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), avail)
+
         return userid
     elif avail['code'] not in range(200, 300):
+
+        # Inform the error microservice
+        #print('\n\n-----Invoking error microservice as order fails-----')
+        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
+                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), avail)
+
         return avail
     else:
         print('\n-----Invoking funds microservice-----')
-        json = {
+        fund_info = {
             "balance": 500
         }
 
         # Updating portfolio on purchase
-        avail = invoke_http(funds_url + userid, method="POST", json=json)
+        avail = invoke_http(funds_url + "/" + userid, method="POST", json=fund_info)
+        message = json.dumps(avail)
+
         if avail['code'] not in range(200, 300):
+
+            # Inform the error microservice
+            #print('\n\n-----Invoking error microservice as order fails-----')
+            print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+
+            amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
+                                            body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+            print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+                code), avail)
+
             return avail
         else:
             return userid

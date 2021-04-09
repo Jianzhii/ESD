@@ -1,4 +1,0 @@
-seaborn
-pandas
-yfinance
-python-poster-master.zip
