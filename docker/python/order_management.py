@@ -48,7 +48,7 @@ def buy_stocks():
             result = processBuy(user_id, stock_id, pricePerStock, qty, amount)
 
             if result != True:
-                return jsonify(result), 500
+                return jsonify(result), 501
             else:
                 return jsonify(
                     {
@@ -62,8 +62,7 @@ def buy_stocks():
                             "amount": amount
                         }
                     }
-                ), 200
-                # update user portfolio
+                ), 200  
 
         except Exception as e:
             # Unexpected error in code

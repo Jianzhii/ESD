@@ -56,7 +56,7 @@ def get_all():
     ), 404
 
 
-@app.route("/profile/<string:user_id>")
+@app.route("/profile/<int:user_id>")
 def find_by_user_id(user_id):
     profile = Profile.query.filter_by(user_id=user_id).first()
     if profile:
@@ -78,7 +78,7 @@ def find_by_user_id(user_id):
 
 
 @app.route("/profile/<int:user_id>", methods=['POST'])
-def create_fund(user_id):
+def create_profile(user_id):
     portfolio = Profile.query.filter_by(
         user_id=user_id).first()
 
@@ -119,20 +119,10 @@ def create_fund(user_id):
 
 
 @app.route("/profile/<int:user_id>", methods=['PUT'])
-def update_order(user_id):
+def update_profile(user_id):
 
     profile = Profile.query.filter_by(
         user_id=user_id).first()
-    if profile:
-        return jsonify(
-            {
-                "code": 404,
-                "data": {
-                    "user_id": user_id
-                },
-                "message": "User already exists."
-            }
-        ), 404
 
     try:
         # update status

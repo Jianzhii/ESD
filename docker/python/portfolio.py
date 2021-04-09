@@ -61,7 +61,7 @@ def get_all():
     ), 404
 
 
-@app.route("/portfolio/<string:user_id>")
+@app.route("/portfolio/<int:user_id>")
 def find_by_user_id(user_id):
     portfolio = Portfolio.query.filter_by(user_id=user_id)
     if portfolio:
@@ -82,7 +82,7 @@ def find_by_user_id(user_id):
     ), 404
 
 
-@app.route("/portfolio/<string:user_id>/<string:stock_id>")
+@app.route("/portfolio/<int:user_id>/<string:stock_id>")
 def find_by_portfolio_id(user_id, stock_id):
     portfolio = Portfolio.query.filter_by(
         user_id=user_id).filter_by(stock_id=stock_id)
@@ -208,13 +208,14 @@ def update_order():
                     except:
                         return jsonify(
                             {
-                                "code": 501,
+                                "code": 500,
                                 "data": {
                                     "stock_id": stock_id
                                 },
                                 "message": "An error occurred editing the stock."
                             }
-                        ), 501
+                        ), 500
+
                     break 
             print(sold)
             return jsonify(

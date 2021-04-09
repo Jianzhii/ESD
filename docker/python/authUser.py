@@ -31,6 +31,7 @@ CLIENT_ID = "954992833627-gdo27oikggjmrrqhc6ai2hq8ncmcrvjm.apps.googleuserconten
 @cross_origin(supports_credentials=True)
 def auth():
     print('-----Starting Auth Microservice-----')
+    print(type(request.get_data()))
     token = request.get_data().decode('utf-8')
 
     try:
@@ -60,7 +61,6 @@ def check(userid, name, email):
     avail = invoke_http(profile_url + "/" + userid, method="POST", json=json)
     print(type(avail['code']))
     if avail['code'] == 404:
-        print("hi")
         return userid
     elif avail['code'] not in range(200, 300):
         return avail

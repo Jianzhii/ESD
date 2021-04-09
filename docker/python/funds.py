@@ -56,7 +56,7 @@ def get_all():
     ), 404
 
 
-@app.route("/funds/<string:user_id>")
+@app.route("/funds/<int:user_id>")
 def find_by_user_id(user_id):
     funds = Fund.query.filter_by(user_id=user_id).first()
     if funds:
@@ -77,7 +77,7 @@ def find_by_user_id(user_id):
     ), 404
 
 
-@app.route("/funds/<string:user_id>", methods=['POST'])
+@app.route("/funds/<int:user_id>", methods=['POST'])
 def create_fund(user_id):
     portfolio = Fund.query.filter_by(
         user_id=user_id).first()
@@ -114,7 +114,7 @@ def create_fund(user_id):
     ), 201
 
 
-@app.route("/funds/<string:user_id>", methods=['PUT'])
+@app.route("/funds/<int:user_id>", methods=['PUT'])
 def update_order(user_id):
     try:
         fund = Fund.query.filter_by(

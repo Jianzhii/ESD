@@ -18,7 +18,7 @@ fundsURL = environ.get('funds_URL') or "http://127.0.0.1:5002/funds"
 profileURL = environ.get('profile_URL') or "http://127.0.0.1:5003/profile"
 yahooURL = environ.get('yahoo_URL') or "http://127.0.0.1:5900/stock"
 
-@app.route("/userprofile/<string:user_id>")
+@app.route("/userprofile/<int:user_id>")
 def userprofile(user_id):
  
     try:
