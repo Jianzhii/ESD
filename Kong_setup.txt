@@ -61,5 +61,13 @@ Steps to set up all API Gateway routing (Kong)
     Path: /api/v1/auth
     Methods: POST OPTIONS
 
+# Set up for funds micro service
+16. Click service and create a new service with the following parameters:
+    Name: funds
+    URL: http://funds:5002/funds
+17. After service is created, click into routes and click add a route with the following parameters:
+    Path: /api/v1/funds
+    Methods: PUT OPTIONS
 
-16. After setting all the routes in Konga, go to all html files (home.html, stock.html, portfolio.html) and change all the URLs to the API Gateway URL.
+
+18. After setting all the routes in Konga, go to all html files (home.html, stock.html, portfolio.html) and change all the URLs to the API Gateway URL.

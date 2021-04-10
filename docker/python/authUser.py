@@ -66,8 +66,24 @@ def check(userid, name, email):
     print(code)
 
     message = json.dumps(avail)
+    
+    if code == 403:
+        #customer already exists
+        return userid
+    elif code not in range(200, 300):
 
-    if code == 201:
+        # Inform the error microservice
+        #print('\n\n-----Invoking error microservice as order fails-----')
+        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
+                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), avail)
+
+        return avail
+    else:
         print('\n-----Invoking funds microservice-----')
         fund_info = {
             "balance": 500
@@ -92,24 +108,6 @@ def check(userid, name, email):
             return avail
         else:
             return userid
-    
-    elif code == 403:
-        #customer already exists
-        return userid
-    else:
-
-        # Inform the error microservice
-        #print('\n\n-----Invoking error microservice as order fails-----')
-        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
-
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
-                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
-
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), avail)
-
-        return avail
-    
 
 
 if __name__ == '__main__':
