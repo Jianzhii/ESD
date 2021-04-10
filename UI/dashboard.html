@@ -63,13 +63,13 @@
           <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link" href="index.html">
-                <span data-feather="shopping-cart"></span>
+                <span data-feather="home"></span>
                 Market
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="dashboard.html">
-                <span data-feather="home"></span>
+                <span data-feather="bar-chart-2"></span>
                 My Dashboard
               </a>
             </li>
@@ -93,12 +93,20 @@
                   <i class='fas fa-piggy-bank' style='font-size:36px'></i>Your Wallet
                 </div>
                 <div class="card-body">
-                  <p class="card-text" id="left">
-                    Amount Left: $
-                  </p>
-                  <p class="card-text" id="spent">
-                    Amount Spent: $
-                  </p>
+                  <div class="row">
+                    <div class="col-sm-9">
+                      <p class="card-text" id="left">
+                        Amount Left: $
+                      </p>
+                      <p class="card-text" id="spent">
+                        Amount Spent: $
+                      </p>
+                    </div>
+                    <div class="col">
+                      <button type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#topUpModal">Top-up</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -133,7 +141,38 @@
             </div>
           </div>
         </div>
+        <div id="modals">
+          <!-- Top up -->
+          <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <div class="container">
+                    <div class="row">
+                      <h5 class="modal-title" id="topUpTitle">Top-up</h5>
+                    </div>
+                  </div>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="modal-body">
+                  <label for='sellQty'>Please indicate the amount you wish to top-up:</label>
+                  <input class="form-control me-2" placeholder="Amount to top-up" id='topUpAmt'>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id='topUpClose'>Close</button>
+                  <button type="button" class="btn btn-primary" onclick='topUp()'>Confirm</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
+
     </div>
   </div>
 
@@ -204,9 +243,6 @@
 
   $(async () => {
     var user_id = sessionStorage.getItem("user_id");
-
-    // Testing
-    //var user_id = 'Apple Tan';
 
     // API Gateway
     var userprofileURL = "http://127.0.0.1:8000/userprofile/" + user_id;
@@ -307,101 +343,51 @@
     window.location.href = "stock.html";
   }
 </script>
-<!-- <script>
-  // Get Name for the title 
-  document.getElementById('buyTitle').innerText = "Buying " + sessionStorage.getItem('stock_id');
-  document.getElementById('sellTitle').innerText = "Selling " + sessionStorage.getItem('stock_id');
-  document.getElementById("name").innerText = sessionStorage.getItem('name');
 
-  // Calling market information microservice
-  $(async () => {
-    var stockID_url = "http://127.0.0.1:8000/market";
+<script>
+  // Calling Microservice to buy stocks
+  function topUp() {
+    $(async () => {
+      var user_id = sessionStorage.getItem('user_id');
+      var amount = parseFloat(document.getElementById('topUpAmt').value);
+      console.log(amount);
 
-    try {
-      const response =
-        await fetch(
-          stockID_url, { method: 'GET' }
-        );
+      var top_up_details = {
+        "action": "LOAD",
+        "amount": amount
+      };
 
-      const result = await response.json();
-      if (response.status === 200) {
+      var funds_url = "http://127.0.0.1:8000/funds/" + user_id;
+      console.log(funds_url);
+      try {
+        const response =
+          await fetch(
+            funds_url, {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(top_up_details)
+          }
+          );
 
-        var gainers = result.results.gainers;
+        const result = await response.json();
+        if (response.status >= 200 && response.status < 300) {
 
-        for (gainer of gainers) {
-          // Calling stock information microservice 
-          $('#gainers').stocks_info(gainer['symbol']);
-
+          alert('Top-up succesful.');
+          $('#topUpClose').click();
+          location.reload();
         }
-
-        var losers = result.results.losers;
-
-        for (loser of losers) {
-          // Calling stock information microservice
-          $('#losers').stocks_info(loser['symbol']);
+        else {
+          alert(result.message);
         }
       }
-    }
 
-    catch (error) {
-      showError
-        ('There is a problem retrieving market data, please try again later.<br/>' + error);
-    }
+      catch (error) {
+        showError
+          (`There is a problem processing the top up, please try again later.<br />` + error);
+      }
 
-
-  });
-
-
-
-  function showError(message) {
-    $('#error').append("<label style='color:red; text-align:center'>" + message + "</label>");
-  };
-
-
-  (function ($) {
-    $.fn.stocks_info = function (symbol) {
-      $(async () => {
-
-        var stockInfo_url = "http://127.0.0.1:8000/stock/" + symbol;
-
-        try {
-          const info_response =
-            await fetch(
-              stockInfo_url, { method: 'GET' }
-            );
-
-          const info_result = await info_response.json();
-          if (info_response.status === 200) {
-            var stock_info = info_result.results;
-
-            change = (((parseFloat(stock_info['historical_data']['one_day']['price']) - parseFloat(stock_info['previousClose'])) / parseFloat(stock_info['previousClose'])) * 100).toFixed(2);
-
-            if (change > 0) {
-              id = 'g_change'
-            }
-            else {
-              id = 'l_change'
-            };
-
-            var row = '<tr>';
-            row += "<td>" + symbol + "</td>" +
-              "<td>" + stock_info['name'] + "</td>" +
-              "<td> $" + stock_info['previousClose'] + "</td>" +
-              "<td id=" + id + ">" + change + "% </td>" +
-              "<td>" + stock_info['marketCap'] + "</td>" +
-              "</tr>";
-            this.append(row);
-          }
-        }
-
-        catch (error) {
-          showError
-            ('There is a problem retrieving stock data, please try again later.<br />' + error);
-        }
-      })
-    }
-  })(jQuery);
-
-</script> -->
+    });
+  }
+</script>
 
 </html>
