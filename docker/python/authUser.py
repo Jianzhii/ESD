@@ -62,42 +62,18 @@ def check(userid, name, email):
         "email": email
     }
     avail = invoke_http(profile_url + "/" + userid, method="POST", json=user_info)
-    print(avail['code'])
+    code = avail['code']
+    print(code)
 
     message = json.dumps(avail)
-    if avail['code'] == 404:
 
-        # Inform the error microservice
-        #print('\n\n-----Invoking error microservice as order fails-----')
-        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
-
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
-                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
-
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), avail)
-
-        return userid
-    elif avail['code'] not in range(200, 300):
-
-        # Inform the error microservice
-        #print('\n\n-----Invoking error microservice as order fails-----')
-        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
-
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
-                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
-
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), avail)
-
-        return avail
-    else:
+    if code == 201:
         print('\n-----Invoking funds microservice-----')
         fund_info = {
             "balance": 500
         }
 
-        # Updating portfolio on purchase
+        #create fund for new user
         avail = invoke_http(funds_url + "/" + userid, method="POST", json=fund_info)
         message = json.dumps(avail)
 
@@ -116,6 +92,24 @@ def check(userid, name, email):
             return avail
         else:
             return userid
+    
+    elif code == 403:
+        #customer already exists
+        return userid
+    else:
+
+        # Inform the error microservice
+        #print('\n\n-----Invoking error microservice as order fails-----')
+        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
+                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), avail)
+
+        return avail
+    
 
 
 if __name__ == '__main__':

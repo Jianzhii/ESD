@@ -85,13 +85,13 @@ def create_profile(user_id):
     if portfolio:
         return jsonify(
             {
-                "code": 404,
+                "code": 403,
                 "data": {
                     "user_id": user_id
                 },
                 "message": "Customer already exists."
             }
-        ), 404
+        ), 403
 
     # update status
     data = request.get_json()
