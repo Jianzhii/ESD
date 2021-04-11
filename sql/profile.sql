@@ -34,8 +34,3 @@ CREATE TABLE IF NOT EXISTS `profile` (
   `email` varchar(50) NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = UTF8MB4;
---
--- Dumping data for table `profile`
---
-INSERT INTO `profile` (`user_id`, `name`, `email`)
-VALUES ('Apple TAN', 'Apple TAN', 'appleTan@smu.edu.sg');

@@ -36,17 +36,3 @@ CREATE TABLE IF NOT EXISTS `portfolio` (
   `quantity` int(11) NOT NULL,
   PRIMARY KEY (`order_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = UTF8MB4;
---
--- Dumping data for table `portfolio`
---
-
-USE `portfolio`;
-
-INSERT INTO `portfolio` (
-    `order_id`,
-    `user_id`,
-    `stock_id`,
-    `price`,
-    `quantity`
-  )
-VALUES (NULL, 'Apple TAN', 'GME', '220.14', '10');

@@ -34,11 +34,3 @@ CREATE TABLE IF NOT EXISTS `funds` (
   `spent` decimal(10, 2) NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = UTF8MB4;
---
--- Dumping data for table `portfolio`
---
-
-USE `funds`;
-
-INSERT INTO `funds` (`user_id`, `balance`, `spent`)
-VALUES ('Apple TAN', '500.00', '0.00');

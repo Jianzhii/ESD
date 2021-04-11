@@ -84,7 +84,7 @@ def processPortfolio(userid):
     if code not in range(200, 300):
         # Inform the error microservice
         #print('\n\n-----Invoking error microservice as order fails-----')
-        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+        print('\n\n-----Publishing the (retrieval error) message with routing_key=order.error-----')
 
         # invoke_http(error_URL, method="POST", json=order_result)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
@@ -94,7 +94,7 @@ def processPortfolio(userid):
 
         # - reply from the invocation is not used;
         # continue even if this invocation fails
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+        print("\nRetrieval status ({:d}) published to the RabbitMQ Exchange:".format(
             code), profile_result)
 
         return profile_result
@@ -108,7 +108,7 @@ def processPortfolio(userid):
     if portfolio_result['code'] not in range(200, 500):
         # Inform the error microservice
         #print('\n\n-----Invoking error microservice as order fails-----')
-        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+        print('\n\n-----Publishing the (retrieval error) message with routing_key=order.error-----')
 
         # invoke_http(error_URL, method="POST", json=order_result)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
@@ -118,7 +118,7 @@ def processPortfolio(userid):
 
         # - reply from the invocation is not used;
         # continue even if this invocation fails
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+        print("\nRetrieval status ({:d}) published to the RabbitMQ Exchange:".format(
             code), portfolio_result)
 
         return portfolio_result
@@ -130,7 +130,7 @@ def processPortfolio(userid):
     if funds_result['code'] not in range(200, 300):
         # Inform the error microservice
         #print('\n\n-----Invoking error microservice as order fails-----')
-        print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
+        print('\n\n-----Publishing the (retrieval error) message with routing_key=order.error-----')
 
         # invoke_http(error_URL, method="POST", json=order_result)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error",
@@ -140,7 +140,7 @@ def processPortfolio(userid):
 
         # - reply from the invocation is not used;
         # continue even if this invocation fails
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+        print("\nRetrieval status ({:d}) published to the RabbitMQ Exchange:".format(
             code), funds_result)
 
         return funds_result
