@@ -17,7 +17,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
     crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script>
     sessionStorage.setItem('prev', 'dashboard.html');
     // console.log(sessionStorage.getItem('prev'));
@@ -202,7 +202,7 @@
     $(async () => {
       var stock_id = document.getElementById('search').value;
       // API Gateway
-      var stockInfo_url = "http://127.0.0.1:8000/stock/" + input;
+      var stockInfo_url = "http://127.0.0.1:8000/api/v1/stock/" + input;
 
       // Non-API Gateway
       // var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
@@ -245,7 +245,7 @@
     var user_id = sessionStorage.getItem("user_id");
 
     // API Gateway
-    var userprofileURL = "http://127.0.0.1:8000/userprofile/" + user_id;
+    var userprofileURL = "http://127.0.0.1:8000/api/v1/userprofile/" + user_id;
 
     // Non-API Gateway
     // var userprofileURL = "http://localhost:5008/userprofile/" + user_id; 
@@ -357,7 +357,7 @@
         "amount": amount
       };
 
-      var funds_url = "http://127.0.0.1:8000/funds/" + user_id;
+      var funds_url = "http://127.0.0.1:8000/api/v1/funds/" + user_id;
       console.log(funds_url);
       try {
         const response =

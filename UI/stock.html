@@ -17,7 +17,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script>
         sessionStorage.setItem('prev', 'stock.html');
         sessionStorage["PricePerStock"] = "Please Wait";
@@ -275,7 +275,7 @@
         $(async () => {
             var stock_id = document.getElementById('search').value;
             // API Gateway
-            var stockInfo_url = "http://127.0.0.1:8000/stock/" + input;
+            var stockInfo_url = "http://127.0.0.1:8000/api/v1/stock/" + input;
 
             // Non-API Gateway
             // var stockInfo_url = "http://127.0.0.1:5900/stock/" + symbol;
@@ -338,7 +338,7 @@
     // Calling microservice for the stock information 
     $(async () => {
         // API Gateway
-        var stockID_url = "http://127.0.0.1:8000/stock/" + sessionStorage.getItem('stock_id');
+        var stockID_url = "http://127.0.0.1:8000/api/v1/stock/" + sessionStorage.getItem('stock_id');
 
         // Non-API Gateway
         // var stockID_url = "http://127.0.0.1:5900/stock/" + sessionStorage.getItem('stock_id');
@@ -437,7 +437,7 @@
                 "price": price
             };
 
-            var buy_url = "http://127.0.0.1:8000/order/buy";
+            var buy_url = "http://127.0.0.1:8000/api/v1/order/buy";
 
             try {
                 const response =
@@ -490,7 +490,7 @@
                 "price": price
             };
 
-            var sell_url = "http://127.0.0.1:8000/order/sell";
+            var sell_url = "http://127.0.0.1:8000/api/v1/order/sell";
 
             try {
                 const response =
